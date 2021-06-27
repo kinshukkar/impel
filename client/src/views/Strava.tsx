@@ -83,6 +83,25 @@ export default function Strava() {
             </Link>
         </Box>
         <Spacer/>
+        {loadingMyStreams && <SpinnerWithMessage xl={false} message="Loading Your Streams"></SpinnerWithMessage>}
+
+        {(senderStreams.length > 0 || recipientStreams.length > 0) && (<>
+            <Text color="#004e87" fontWeight="bold" fontSize="2rem" mt="1rem">My Streams</Text>
+            <HStack my="2rem" spacing="0.75rem">
+                {!!senderStreams.length && (
+                    <VStack alignSelf="start" spacing="0.75rem" w="26rem">
+                        <Text textTransform="uppercase" fontSize="1rem" color="#004e87">As Sender</Text>
+                        {senderStreams.map(s => <LiStream key={s.id} stream={s} />)}
+                    </VStack>
+                )}
+                {!!recipientStreams.length && (
+                    <VStack alignSelf="start" spacing="0.75rem" w="26rem">
+                        <Text textTransform="uppercase" fontSize="1rem" color="#004e87">As Recipient</Text>
+                        {recipientStreams.map(s => <LiStream key={s.id} stream={s} />)}
+                    </VStack>
+                )}
+            </HStack>
+        </>)}
         <Spacer/>
     </>)
 }

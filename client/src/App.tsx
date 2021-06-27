@@ -5,16 +5,13 @@ import {
     Route,
 } from "react-router-dom"
 import {
-    ChakraProvider, Flex, Link, Spacer, Text
+    ChakraProvider, Flex
 } from "@chakra-ui/react"
-import GHIcon from "./components/icons/GHIcon"
 import Home from "./views/Home"
 import Strava from "./views/Strava"
 import {WalletConnectContextProvider} from "@cityofzion/wallet-connect-sdk-react";
 import Header from "./components/Header";
-import ConnectToProceed from "./views/ConnectToProceed";
 import CreateStream from "./views/CreateStream";
-import StreamDetails from "./views/StreamDetails";
 import PairingModal from "./components/modals/PairingModal";
 import RequestModal from "./components/modals/RequestModal";
 import { DEFAULT_APP_METADATA, DEFAULT_CHAIN_ID, DEFAULT_LOGGER, DEFAULT_METHODS, DEFAULT_RELAY_PROVIDER }from "./constants";
@@ -38,14 +35,8 @@ export default function App() {
                               backgroundPosition="bottom" backgroundRepeat="repeat-x">
 
                             <Switch>
-                                <Route path="/connectToProceed">
-                                    <ConnectToProceed/>
-                                </Route>
                                 <Route path="/createStream">
                                     <CreateStream/>
-                                </Route>
-                                <Route path="/stream/:id">
-                                    <StreamDetails/>
                                 </Route>
                                 <Route path="/strava" component={Strava}/>
                                 <Route path="/" component={Home}/>
