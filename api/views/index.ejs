@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+
+<body>
+    <h1>
+        <%= title %>
+    </h1>
+    <p>Welcome to
+        <%= title %>
+    </p>
+
+    <form id="loginuser" name="loginuser" method="post" action="/user/login">
+        <input id="inputWalletPublicKey" type="text" placeholder="publickey" name="publickey" />
+        <button id="btnSubmit" type="submit">Submit</button>
+    </form>
+
+</body>
+    <script type="text/javascript" src="/build/client.js" async></script>
+    <script type="text/javascript" src="/build/wcs/index.js" async></script>
+
+
+</html>
