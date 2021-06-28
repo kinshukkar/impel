@@ -1,6 +1,5 @@
-using System;
+﻿using System;
 using System.ComponentModel;
-using System.Numerics;
 
 using Neo;
 using Neo.SmartContract.Framework;
@@ -9,14 +8,13 @@ using Neo.SmartContract.Framework.Services;
 
 namespace ImpelSC
 {
-    [DisplayName("Impel.ImpelSCv0.1")]
+    [DisplayName("Impel.ImpelSCv0.1.2")]
     [ManifestExtra("Author", "Kinshuk Kar, Pompita Sarkar")]
     [ManifestExtra("Email", "kinshuk89@gmail.com")]
     [ManifestExtra("Description", "A novel motivation mechanism to assist people in getting fitter with social and financial rewards")]
     public class ImpelSCContract : SmartContract
     {
-        private static StorageMap ContractStorage => new StorageMap(Storage.CurrentContext, "ImpelSCContract");
-        private static StorageMap ContractMetadata => new StorageMap(Storage.CurrentContext, "Metadata");
+        static readonly ImpelStorage contractData = new ImpelStorage();
         private static Transaction Tx => (Transaction) Runtime.ScriptContainer;
 
         [DisplayName("_deploy")]
@@ -24,13 +22,20 @@ namespace ImpelSC
         {
             if (!update)
             {
-                ContractMetadata.Put("Owner", (ByteString) Tx.Sender);
+                initialize();
             }
         }
+        private static void initialize() {
 
+            contractData.PutOwner((ByteString) Tx.Sender);
+            contractData.ResetLastChallengeId();
+            int newChallengeId = contractData.GetAndIncrementLastChallengeId();
+            Challenge dummyChallenge = Challenge.getTestChallenge();
+            contractData.AddChallenge(newChallengeId, dummyChallenge);
+        }
         public static void UpdateContract(ByteString nefFile, string manifest)
         {
-            ByteString owner = ContractMetadata.Get("Owner");
+            ByteString owner = contractData.GetOwner();
             if (!Tx.Sender.Equals(owner))
             {
                 throw new Exception("Only the contract owner can do this");
@@ -40,12 +45,107 @@ namespace ImpelSC
 
         public static void DestroyContract(ByteString nefFile, string manifest)
         {
-            ByteString owner = ContractMetadata.Get("Owner");
+            ByteString owner = contractData.GetOwner();
             if (!Tx.Sender.Equals(owner))
             {
                 throw new Exception("Only the contract owner can do this");
             }
             ContractManagement.Destroy();
+        }
+
+        public static void RegisterUser(string username)
+        {
+            contractData.PutUser(Tx.Sender, username);
+        }
+        public static string RetrieveUser()
+        {
+            return contractData.GetUser(Tx.Sender);
+        }
+    }
+
+    class ImpelStorage
+    {
+        readonly StorageMap dappData;
+        readonly StorageMap usersMap;
+        readonly StorageMap challengesMap;
+
+        public ImpelStorage()
+        {
+            dappData = new StorageMap(Storage.CurrentContext, "ImpelSC.Storage.CoreData");
+            usersMap = new StorageMap(Storage.CurrentContext, "ImpelSC.Storage.Users");
+            challengesMap = new StorageMap(Storage.CurrentContext, "ImpelSC.Storage.Challenges");
+        }
+
+        public string GetUser(UInt160 user) => (string)usersMap.Get(user) ?? "";
+        public void PutUser(UInt160 user, string username) => usersMap.Put(user, (ByteString)username);
+        public string GetOwner() => (ByteString)dappData.Get("Owner") ?? "";
+        public void PutOwner(ByteString owner) => dappData.Put("Owner", (ByteString)owner);
+        public void ResetLastChallengeId() => dappData.Put("LastChallengeId", 1);
+        public int GetAndIncrementLastChallengeId() {
+            int lastChallengeId = (int) StdLib.Atoi(dappData.Get("LastChallengeId"));
+            lastChallengeId++;
+            dappData.Put("LastChallengeId", lastChallengeId);
+            return lastChallengeId;
+        }
+        public void AddChallenge(int challengeId, Challenge challenge) {
+            challengesMap.Put( StdLib.Itoa(challengeId, 10) , Challenge.Serialize(challenge));
+        }
+    }
+
+    class Challenge
+    {
+        public enum ChallengeState
+        {
+            ChallengeStateNotStarted,
+            ChallengeStateActive,
+            ChallengeStateCompleted,
+            ChallengeStateEvaluationCompleted
+        }
+
+        public enum ChallengeActivityType
+        {
+            ChallengeActivityTypeWalkRun
+        }
+
+        public enum ChallengeType
+        {
+            ChallengeTypeMax
+        }
+        private string challengeTitle;
+        private ulong challengeStartTime;
+        private ulong challengeEndTime;
+        private ulong challengeEvaluationTime;
+        private ChallengeState challengeState;
+        private ChallengeActivityType challengeActivityType;
+        private ChallengeType challengeType;
+        private int challengeValue;
+
+        public Challenge(string title, ulong startTime, ulong endTime, ulong evaluationTime, ChallengeActivityType activityType, ChallengeType type, int value)
+        {
+            challengeTitle = title;
+            challengeStartTime = startTime;
+            challengeEndTime = endTime;
+            challengeEvaluationTime = evaluationTime;
+            challengeState = ChallengeState.ChallengeStateNotStarted;
+            challengeActivityType = activityType;
+            challengeType = type;
+            challengeValue = value;
+        }
+
+        public static string Serialize(Challenge challenge)
+        {
+            return StdLib.JsonSerialize(challenge);
+        }
+
+        public static Challenge Deserialize(string json)
+        {
+            return (Challenge) StdLib.JsonDeserialize(json);
+        }
+
+        public static Challenge getTestChallenge() 
+        {
+            Challenge newChallenge = new Challenge("June 5K Challenge", 1624559400000, 1624991400000, 1625164200000, ChallengeActivityType.ChallengeActivityTypeWalkRun, ChallengeType.ChallengeTypeMax, 5);
+            return newChallenge;
         }
     }
 }
