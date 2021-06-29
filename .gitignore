@@ -1,3 +1,7 @@
 
 api/node_modules/
 client/node_modules/
+smart_contract/obj/
+smart_contract/bin/
+smart_contract/neo-local.neo-express
+wallets/KKTestWallet.neo-wallet.json
