@@ -9,7 +9,7 @@ using Neo.SmartContract.Framework.Services;
 
 namespace ImpelSC
 {
-    [DisplayName("Impel.ImpelSCv0.1.2")]
+    [DisplayName("Impel.ImpelSCv0.1.12")]
     [ManifestExtra("Author", "Kinshuk Kar, Pompita Sarkar")]
     [ManifestExtra("Email", "kinshuk89@gmail.com")]
     [ManifestExtra("Description", "A novel motivation mechanism to assist people in getting fitter with social and financial rewards")]
@@ -30,7 +30,7 @@ namespace ImpelSC
             contractData.PutOwner((ByteString) Tx.Sender);
             contractData.ResetLastUserId();
             contractData.ResetLastChallengeId();
-            int newChallengeId = contractData.GetAndIncrementLastChallengeId();
+            BigInteger newChallengeId = contractData.GetAndIncrementLastChallengeId();
             Challenge dummyChallenge = Challenge.getTestChallenge();
             contractData.AddChallenge(newChallengeId, dummyChallenge);
         }
@@ -53,13 +53,13 @@ namespace ImpelSC
         }
 
         public static void RegisterUser(string username) {
-            int newUserId = contractData.GetAndIncrementLastUserId();
-            User newUser = new User(Tx.Sender, username);
-            contractData.PutUser(newUserId, newUser);
+            BigInteger newUserId = contractData.GetAndIncrementLastUserId();
+            User newUser = new User((int) newUserId, username);
+            contractData.PutUser((ByteString) Tx.Sender, newUser);
         }
 
         public static User RetrieveUser() {
-            return contractData.GetUser(Tx.Sender);
+            return contractData.GetUser((ByteString) Tx.Sender);
         }
 
         public static void onNEP17Payment(UInt160 from, BigInteger amount, object[] data) {
@@ -79,48 +79,43 @@ namespace ImpelSC
             challengesMap = new StorageMap(Storage.CurrentContext, "ImpelSC.Storage.Challenges");
         }
 
-        public User GetUser(UInt160 userAccount) {
-            Iterator results = usersMap.Find( StdLib.Itoa((BigInteger)userAccount), FindOptions.ValuesOnly);
-            string userJSON = null;
-            do {
-                userJSON = (string) results.Value;
-                break;
-            } while (results.Next());
-            return (User) StdLib.JsonDeserialize(userJSON);
+        public User GetUser(ByteString userAccount) {
+            string userJSON = usersMap.Get(userAccount);
+            if (userJSON == null || userJSON == "") {
+                return new User(0, "");
+            }
+            return User.Deserialize(userJSON);
         }
-        public void PutUser(int userId, User user) => usersMap.Put(StdLib.Itoa(userId, 10), StdLib.JsonSerialize(user));
+        public void PutUser(ByteString userKey, User user) => usersMap.Put(userKey, User.Serialize(user));
         public string GetOwner() => (ByteString)dappData.Get("Owner") ?? "";
         public void PutOwner(ByteString owner) => dappData.Put("Owner", (ByteString)owner);
         public void ResetLastChallengeId() => dappData.Put("LastChallengeId", 1);
 
-        public int GetAndIncrementLastChallengeId() {
-            int lastChallengeId = (int) StdLib.Atoi(dappData.Get("LastChallengeId"));
-            lastChallengeId++;
-            dappData.Put("LastChallengeId", lastChallengeId);
+        public BigInteger GetAndIncrementLastChallengeId() {
+            BigInteger lastChallengeId = (BigInteger) dappData.Get("LastChallengeId");
+            dappData.Put("LastChallengeId", lastChallengeId + 1);
             return lastChallengeId;
         }
-        public void AddChallenge(int challengeId, Challenge challenge) {
-            challengesMap.Put( StdLib.Itoa(challengeId, 10) , Challenge.Serialize(challenge));
+        public void AddChallenge(BigInteger challengeId, Challenge challenge) {
+            challengesMap.Put( (ByteString)challengeId, Challenge.Serialize(challenge));
         }
 
         public void ResetLastUserId() => dappData.Put("LastUserId", 1);
 
-        public int GetAndIncrementLastUserId() {
-            int lastUserId = (int) StdLib.Atoi(dappData.Get("LastUserId"));
-            lastUserId++;
-            dappData.Put("LastUserId", lastUserId);
+        public BigInteger GetAndIncrementLastUserId() {
+            BigInteger lastUserId = (BigInteger) dappData.Get("LastUserId");
+            dappData.Put("LastUserId", lastUserId + 1);
             return lastUserId;
         }
-
     }
 
     public class User
     {
-        private UInt160 userAccount; 
+        private int userId; 
         private string username;
 
-        public User(UInt160 account, string name) {
-            userAccount = account;
+        public User(int id, string name) {
+            userId = id;
             username = name;
         }
 
@@ -156,9 +151,9 @@ namespace ImpelSC
         private ChallengeState challengeState;
         private ChallengeActivityType challengeActivityType;
         private ChallengeType challengeType;
-        private int challengeValue;
+        private BigInteger challengeValue;
 
-        public Challenge(string title, ulong startTime, ulong endTime, ulong evaluationTime, ChallengeActivityType activityType, ChallengeType type, int value) {
+        public Challenge(string title, ulong startTime, ulong endTime, ulong evaluationTime, ChallengeActivityType activityType, ChallengeType type, BigInteger value) {
             challengeTitle = title;
             challengeStartTime = startTime;
             challengeEndTime = endTime;
