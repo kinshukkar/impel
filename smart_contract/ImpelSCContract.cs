@@ -9,7 +9,7 @@ using Neo.SmartContract.Framework.Services;
 
 namespace ImpelSC
 {
-    [DisplayName("Impel.ImpelSCv0.1.40")]
+    [DisplayName("Impel.ImpelSCv0.1.41")]
     [ManifestExtra("Author", "Kinshuk Kar, Pompita Sarkar")]
     [ManifestExtra("Email", "kinshuk89@gmail.com")]
     [ManifestExtra("Description", "A novel motivation mechanism to assist people in getting fitter with social and financial rewards")]
@@ -36,6 +36,7 @@ namespace ImpelSC
             BigInteger newChallengeId = contractData.GetAndIncrementLastChallengeId();
             Challenge dummyChallenge = Challenge.getTestChallenge();
             contractData.PutChallenge(newChallengeId, dummyChallenge);
+
         }
 
         public static void UpdateContract(ByteString nefFile, string manifest) {
@@ -90,6 +91,35 @@ namespace ImpelSC
                 }
             }
         }
+
+        public static void ValidateChallengeEntries() {
+            FetchUserChallengeEntries();
+        }
+        public static void FetchUserChallengeEntries()
+        {
+            string url = "https://raw.githubusercontent.com/kinshukkar/impel-test-data/main/test.json";
+            string filter = "$";
+            string callback = "callback";
+            object data = "data"; 
+            long gasForResponse = Oracle.MinimumResponseFee;
+
+            Oracle.Request(url, filter, callback, data, gasForResponse);
+        }
+
+        public static void FetchUserChallengeEntriesCallback(string url, string data, OracleResponseCode code, string result)
+        {
+            if (Runtime.CallingScriptHash != Oracle.Hash) throw new Exception("Unauthorized!");
+
+            if (code != OracleResponseCode.Success) throw new Exception("Oracle response failure with code " + (byte)code);
+
+            object ret = StdLib.JsonDeserialize(result);
+            object[] arr = (object[])ret;
+            string value = (string)arr[0];
+
+            Runtime.Log("data: " + data);
+            Runtime.Log("response value: " + value);
+        }
+
     }
 
     class ImpelStorage
