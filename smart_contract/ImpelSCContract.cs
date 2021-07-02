@@ -9,7 +9,7 @@ using Neo.SmartContract.Framework.Services;
 
 namespace ImpelSC
 {
-    [DisplayName("Impel.ImpelSCv0.1.30")]
+    [DisplayName("Impel.ImpelSCv0.1.40")]
     [ManifestExtra("Author", "Kinshuk Kar, Pompita Sarkar")]
     [ManifestExtra("Email", "kinshuk89@gmail.com")]
     [ManifestExtra("Description", "A novel motivation mechanism to assist people in getting fitter with social and financial rewards")]
@@ -75,7 +75,7 @@ namespace ImpelSC
             return contractData.GetUser(address);
         }
 
-        public BigInteger GetSubscribedChallengesForUser(BigInteger challengeId) {
+        public List<UserCommit> GetSubscribedEntriesForChallenge(BigInteger challengeId) {
             return contractData.GetSubscribedEntriesForChallenge(challengeId);
         }
 
@@ -149,25 +149,23 @@ namespace ImpelSC
 
             UserCommit userChallengeRecord = new UserCommit(userKey, (int)amount);
             string entry = StdLib.JsonSerialize(userChallengeRecord);
-            string recordKey = "c" + challengeId + userKey;
+            string recordKey = "c#" + challengeId + userKey;
             userChallengeMapping.Put(recordKey, entry);
         }
 
-        public int GetSubscribedEntriesForChallenge(BigInteger challengeId) {
+        public UserCommit GetChallengeEntry(string key) {
+            return (UserCommit) StdLib.JsonDeserialize(userChallengeMapping.Get(key));
 
-            Challenge[] challenges = new Challenge[]{};
-            var iterator = userChallengeMapping.Find("c" + challengeId, FindOptions.KeysOnly);
-            int i = 0;
-            while (iterator.Next())
-            {
-                i = i + 1;
-                var kvp = (object[])iterator.Value;
-                string key = (ByteString)kvp[0];
-            //     string[] keyComps = key.Split("--");
-            //     string challengeId = keyComps[0];
+        }
+        public List<UserCommit> GetSubscribedEntriesForChallenge(BigInteger challengeId) {
+            List<UserCommit> challengeEntries = new List<UserCommit>();
+            var iterator = userChallengeMapping.Find("c#" + challengeId, FindOptions.KeysOnly | FindOptions.RemovePrefix);
+            while(iterator.Next()) {
+                string key = "c#" + challengeId + (string)iterator.Value;
+                challengeEntries.Add(GetChallengeEntry(key));
             }
 
-            return i;
+            return challengeEntries;
         }
     }
 
