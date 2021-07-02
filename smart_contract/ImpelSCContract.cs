@@ -9,10 +9,13 @@ using Neo.SmartContract.Framework.Services;
 
 namespace ImpelSC
 {
-    [DisplayName("Impel.ImpelSCv0.1.12")]
+    [DisplayName("Impel.ImpelSCv0.1.30")]
     [ManifestExtra("Author", "Kinshuk Kar, Pompita Sarkar")]
     [ManifestExtra("Email", "kinshuk89@gmail.com")]
     [ManifestExtra("Description", "A novel motivation mechanism to assist people in getting fitter with social and financial rewards")]
+    [ContractPermission("*", "onNEP17Payment")]
+    [ContractTrust("0xd2a4cff31913016155e38e474a2c06d08be276cf")]
+    
     public class ImpelSCContract : SmartContract
     {
         static readonly ImpelStorage contractData = new ImpelStorage();
@@ -25,15 +28,16 @@ namespace ImpelSC
                 initialize();
             }
         }
+
         private static void initialize() {
 
             contractData.PutOwner((ByteString) Tx.Sender);
-            contractData.ResetLastUserId();
             contractData.ResetLastChallengeId();
             BigInteger newChallengeId = contractData.GetAndIncrementLastChallengeId();
             Challenge dummyChallenge = Challenge.getTestChallenge();
-            contractData.AddChallenge(newChallengeId, dummyChallenge);
+            contractData.PutChallenge(newChallengeId, dummyChallenge);
         }
+
         public static void UpdateContract(ByteString nefFile, string manifest) {
             ByteString owner = contractData.GetOwner();
             if (!Tx.Sender.Equals(owner))
@@ -52,43 +56,75 @@ namespace ImpelSC
             ContractManagement.Destroy();
         }
 
+        public static string ToAddress(ByteString sender) {
+            var address = StdLib.Base58Encode("5" + sender);
+            Runtime.Log(address);
+            return (address);
+        }
+
         public static void RegisterUser(string username) {
-            BigInteger newUserId = contractData.GetAndIncrementLastUserId();
-            User newUser = new User((int) newUserId, username);
-            contractData.PutUser((ByteString) Tx.Sender, newUser);
+            User newUser = new User(username);
+            contractData.PutUser(ToAddress((ByteString) Tx.Sender), newUser);
         }
 
         public static User RetrieveUser() {
-            return contractData.GetUser((ByteString) Tx.Sender);
+            return RetrieveUserByAddress(ToAddress((ByteString) Tx.Sender));
         }
 
-        public static void onNEP17Payment(UInt160 from, BigInteger amount, object[] data) {
+        public static User RetrieveUserByAddress(string address) {
+            return contractData.GetUser(address);
+        }
 
+        public BigInteger GetSubscribedChallengesForUser(BigInteger challengeId) {
+            return contractData.GetSubscribedEntriesForChallenge(challengeId);
+        }
+
+        public static void OnNEP17Payment(UInt160 from, BigInteger amount, object[] data) {
+
+            if (!Runtime.CheckWitness(from)) throw new Exception("Check your signature.");
+
+            if (Runtime.CallingScriptHash == GAS.Hash) {
+                if (data.Length == 2 && (string)data[0] == "join_challenge") {
+                    BigInteger challengeId = (BigInteger) data[1];
+                    contractData.AddUserChallengeRecord(challengeId, ToAddress((ByteString) from), amount);
+                }
+            }
         }
     }
 
     class ImpelStorage
     {
+        const string IMPELSC_STORAGE_CORE_DATA = "A*";
+        const string IMPELSC_STORAGE_USERS = "B*";
+        const string IMPELSC_STORAGE_CHALLENGES = "C*";
+        const string IMPELSC_STORAGE_USER_CHALLENGES = "D*";
+        
         readonly StorageMap dappData;
         readonly StorageMap usersMap;
         readonly StorageMap challengesMap;
+        readonly StorageMap userChallengeMapping;
 
         public ImpelStorage() {
-            dappData = new StorageMap(Storage.CurrentContext, "ImpelSC.Storage.CoreData");
-            usersMap = new StorageMap(Storage.CurrentContext, "ImpelSC.Storage.Users");
-            challengesMap = new StorageMap(Storage.CurrentContext, "ImpelSC.Storage.Challenges");
+            dappData = new StorageMap(Storage.CurrentContext, IMPELSC_STORAGE_CORE_DATA);
+            usersMap = new StorageMap(Storage.CurrentContext, IMPELSC_STORAGE_USERS);
+            challengesMap = new StorageMap(Storage.CurrentContext, IMPELSC_STORAGE_CHALLENGES);
+            userChallengeMapping = new StorageMap(Storage.CurrentContext, IMPELSC_STORAGE_USER_CHALLENGES);
         }
 
-        public User GetUser(ByteString userAccount) {
+        public User GetUser(string userAccount) {
             string userJSON = usersMap.Get(userAccount);
             if (userJSON == null || userJSON == "") {
-                return new User(0, "");
+                return new User("");
             }
             return User.Deserialize(userJSON);
         }
-        public void PutUser(ByteString userKey, User user) => usersMap.Put(userKey, User.Serialize(user));
+
+        public void PutUser(string userKey, User user) => usersMap.Put(userKey, User.Serialize(user));
+        
         public string GetOwner() => (ByteString)dappData.Get("Owner") ?? "";
+        
         public void PutOwner(ByteString owner) => dappData.Put("Owner", (ByteString)owner);
+        
         public void ResetLastChallengeId() => dappData.Put("LastChallengeId", 1);
 
         public BigInteger GetAndIncrementLastChallengeId() {
@@ -96,26 +132,48 @@ namespace ImpelSC
             dappData.Put("LastChallengeId", lastChallengeId + 1);
             return lastChallengeId;
         }
-        public void AddChallenge(BigInteger challengeId, Challenge challenge) {
+
+        public Challenge GetChallenge(BigInteger challengeId) {
+            string challengeJSON = challengesMap.Get((ByteString)challengeId);
+            if (challengeJSON == null || challengeJSON == "") {
+                return null;
+            }
+            return Challenge.Deserialize(challengeJSON);
+        }
+
+        public void PutChallenge(BigInteger challengeId, Challenge challenge) {
             challengesMap.Put( (ByteString)challengeId, Challenge.Serialize(challenge));
         }
 
-        public void ResetLastUserId() => dappData.Put("LastUserId", 1);
+        public void AddUserChallengeRecord(BigInteger challengeId, string userKey, BigInteger amount) {
 
-        public BigInteger GetAndIncrementLastUserId() {
-            BigInteger lastUserId = (BigInteger) dappData.Get("LastUserId");
-            dappData.Put("LastUserId", lastUserId + 1);
-            return lastUserId;
+            UserCommit userChallengeRecord = new UserCommit(userKey, (int)amount);
+            string entry = StdLib.JsonSerialize(userChallengeRecord);
+            string recordKey = "c" + challengeId + userKey;
+            userChallengeMapping.Put(recordKey, entry);
+        }
+
+        public int GetSubscribedEntriesForChallenge(BigInteger challengeId) {
+
+            Challenge[] challenges = new Challenge[]{};
+            var iterator = userChallengeMapping.Find("c" + challengeId, FindOptions.KeysOnly);
+            int i = 0;
+            while (iterator.Next())
+            {
+                i = i + 1;
+                var kvp = (object[])iterator.Value;
+                string key = (ByteString)kvp[0];
+            //     string[] keyComps = key.Split("--");
+            //     string challengeId = keyComps[0];
+            }
+
+            return i;
         }
     }
 
-    public class User
-    {
-        private int userId; 
-        private string username;
-
-        public User(int id, string name) {
-            userId = id;
+    public class User {
+        public string username;
+        public User(string name) {
             username = name;
         }
 
@@ -128,6 +186,27 @@ namespace ImpelSC
         }
 
     }
+
+    public class UserCommit {
+        
+        public enum UserChallengeState {
+            DataNotSubmitted,
+            DataSubmitted,
+            DataSubmittedQualified,
+            DataSubmittedNotQualified
+        }
+        public string userKey;
+        public int commitAmount;
+
+        public UserChallengeState state;
+
+        public UserCommit(string key, int amount) {
+            userKey = key;
+            commitAmount = amount;
+            state = UserChallengeState.DataNotSubmitted;
+        }
+    }
+
     class Challenge
     {
         public enum ChallengeState {
@@ -144,14 +223,14 @@ namespace ImpelSC
         public enum ChallengeType {
             ChallengeTypeMax
         }
-        private string challengeTitle;
-        private ulong challengeStartTime;
-        private ulong challengeEndTime;
-        private ulong challengeEvaluationTime;
-        private ChallengeState challengeState;
-        private ChallengeActivityType challengeActivityType;
-        private ChallengeType challengeType;
-        private BigInteger challengeValue;
+        public string challengeTitle;
+        public ulong challengeStartTime;
+        public ulong challengeEndTime;
+        public ulong challengeEvaluationTime;
+        public ChallengeState challengeState;
+        public ChallengeActivityType challengeActivityType;
+        public ChallengeType challengeType;
+        public BigInteger challengeValue;
 
         public Challenge(string title, ulong startTime, ulong endTime, ulong evaluationTime, ChallengeActivityType activityType, ChallengeType type, BigInteger value) {
             challengeTitle = title;
