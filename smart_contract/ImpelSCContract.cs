@@ -75,7 +75,7 @@ namespace ImpelSC
             return contractData.GetUser(address);
         }
 
-        public List<UserCommit> GetSubscribedEntriesForChallenge(BigInteger challengeId) {
+        public List<UserChallengeEntry> GetSubscribedEntriesForChallenge(BigInteger challengeId) {
             return contractData.GetSubscribedEntriesForChallenge(challengeId);
         }
 
@@ -147,18 +147,18 @@ namespace ImpelSC
 
         public void AddUserChallengeRecord(BigInteger challengeId, string userKey, BigInteger amount) {
 
-            UserCommit userChallengeRecord = new UserCommit(userKey, (int)amount);
+            UserChallengeEntry userChallengeRecord = new UserChallengeEntry(userKey, (int)amount);
             string entry = StdLib.JsonSerialize(userChallengeRecord);
             string recordKey = "c#" + challengeId + userKey;
             userChallengeMapping.Put(recordKey, entry);
         }
 
-        public UserCommit GetChallengeEntry(string key) {
-            return (UserCommit) StdLib.JsonDeserialize(userChallengeMapping.Get(key));
+        public UserChallengeEntry GetChallengeEntry(string key) {
+            return (UserChallengeEntry) StdLib.JsonDeserialize(userChallengeMapping.Get(key));
 
         }
-        public List<UserCommit> GetSubscribedEntriesForChallenge(BigInteger challengeId) {
-            List<UserCommit> challengeEntries = new List<UserCommit>();
+        public List<UserChallengeEntry> GetSubscribedEntriesForChallenge(BigInteger challengeId) {
+            List<UserChallengeEntry> challengeEntries = new List<UserChallengeEntry>();
             var iterator = userChallengeMapping.Find("c#" + challengeId, FindOptions.KeysOnly | FindOptions.RemovePrefix);
             while(iterator.Next()) {
                 string key = "c#" + challengeId + (string)iterator.Value;
@@ -185,7 +185,7 @@ namespace ImpelSC
 
     }
 
-    public class UserCommit {
+    public class UserChallengeEntry {
         
         public enum UserChallengeState {
             DataNotSubmitted,
@@ -198,7 +198,7 @@ namespace ImpelSC
 
         public UserChallengeState state;
 
-        public UserCommit(string key, int amount) {
+        public UserChallengeEntry(string key, int amount) {
             userKey = key;
             commitAmount = amount;
             state = UserChallengeState.DataNotSubmitted;
