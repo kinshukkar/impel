@@ -10,21 +10,9 @@ export class N3Helper {
         this.networkMagic = networkMagic
     }
 
-    // TODO: the websocket didn't send the desired information
-    getNotificationsFromTxId2 = async (txId: string): Promise<any> => {
-        return new Promise((resolve, reject) => {
-            new WebSocket(`wss://dora.coz.io/ws/v1/neo3/testnet/log/${txId}`).onmessage = function (event) {
-                console.log(event.data);
-                // this.close()
-                // resolve(event.data)
-            }
-        })
-    }
-
     getNotificationsFromTxId = async (txId: string) => {
         const rpcClient = new rpc.RPCClient(this.rpcAddress)
 
-        // TODO: use Joe's websocket to create `await waitForTheNextBlock()` - http://54.227.25.52:9009/
         let appLog
         do {
             try {

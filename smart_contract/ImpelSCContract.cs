@@ -7,9 +7,9 @@ using Neo.SmartContract.Framework;
 using Neo.SmartContract.Framework.Native;
 using Neo.SmartContract.Framework.Services;
 
-namespace ImpelSC
+namespace Impel
 {
-    [DisplayName("Impel.ImpelSCv0.1.41")]
+    [DisplayName("Impel.ImpelSCv0.1.46")]
     [ManifestExtra("Author", "Kinshuk Kar, Pompita Sarkar")]
     [ManifestExtra("Email", "kinshuk89@gmail.com")]
     [ManifestExtra("Description", "A novel motivation mechanism to assist people in getting fitter with social and financial rewards")]
@@ -31,7 +31,7 @@ namespace ImpelSC
 
         private static void initialize() {
 
-            contractData.PutOwner((ByteString) Tx.Sender);
+            contractData.PutOwner(ToAddress((ByteString) Tx.Sender));
             contractData.ResetLastChallengeId();
             BigInteger newChallengeId = contractData.GetAndIncrementLastChallengeId();
             Challenge dummyChallenge = Challenge.getTestChallenge();
@@ -40,8 +40,8 @@ namespace ImpelSC
         }
 
         public static void UpdateContract(ByteString nefFile, string manifest) {
-            ByteString owner = contractData.GetOwner();
-            if (!Tx.Sender.Equals(owner))
+            string owner = contractData.GetOwner();
+            if (!ToAddress((ByteString)Tx.Sender).Equals(owner))
             {
                 throw new Exception("Only the contract owner can do this");
             }
@@ -49,8 +49,8 @@ namespace ImpelSC
         }
 
         public static void DestroyContract(ByteString nefFile, string manifest) {
-            ByteString owner = contractData.GetOwner();
-            if (!Tx.Sender.Equals(owner))
+            string owner = contractData.GetOwner();
+            if (!ToAddress((ByteString)Tx.Sender).Equals(owner))
             {
                 throw new Exception("Only the contract owner can do this");
             }
@@ -58,8 +58,7 @@ namespace ImpelSC
         }
 
         public static string ToAddress(ByteString sender) {
-            var address = StdLib.Base58Encode("5" + sender);
-            Runtime.Log(address);
+            var address = StdLib.Base58CheckEncode("5" + sender);
             return (address);
         }
 
@@ -74,6 +73,10 @@ namespace ImpelSC
 
         public static User RetrieveUserByAddress(string address) {
             return contractData.GetUser(address);
+        }
+
+        public List<Challenge> GetAllChallenges() {
+            return contractData.GetAllChallenges();
         }
 
         public List<UserChallengeEntry> GetSubscribedEntriesForChallenge(BigInteger challengeId) {
@@ -151,9 +154,9 @@ namespace ImpelSC
 
         public void PutUser(string userKey, User user) => usersMap.Put(userKey, User.Serialize(user));
         
-        public string GetOwner() => (ByteString)dappData.Get("Owner") ?? "";
+        public string GetOwner() => (string)dappData.Get("Owner") ?? "";
         
-        public void PutOwner(ByteString owner) => dappData.Put("Owner", (ByteString)owner);
+        public void PutOwner(string owner) => dappData.Put("Owner", owner);
         
         public void ResetLastChallengeId() => dappData.Put("LastChallengeId", 1);
 
@@ -173,6 +176,22 @@ namespace ImpelSC
 
         public void PutChallenge(BigInteger challengeId, Challenge challenge) {
             challengesMap.Put( (ByteString)challengeId, Challenge.Serialize(challenge));
+        }
+
+        public List<Challenge> GetAllChallenges() {
+            List<Challenge> challenges = new List<Challenge>();
+            var iterator = challengesMap.Find(FindOptions.KeysOnly | FindOptions.RemovePrefix);
+            while(iterator.Next()) {
+                BigInteger key = new BigInteger((byte[])iterator.Value); 
+                Runtime.Log("GetAllChallenges - " + key);
+                if (key < 1) {
+                    continue;
+                } else {
+                    challenges.Add(GetChallenge(key));
+                }
+            }
+
+            return challenges;
         }
 
         public void AddUserChallengeRecord(BigInteger challengeId, string userKey, BigInteger amount) {
@@ -235,7 +254,7 @@ namespace ImpelSC
         }
     }
 
-    class Challenge
+    public class Challenge
     {
         public enum ChallengeState {
             ChallengeStateNotStarted,

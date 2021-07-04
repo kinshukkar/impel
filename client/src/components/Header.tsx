@@ -9,7 +9,7 @@ import LogoutIcon from "./icons/LogoutIcon";
 
 const chainMeta = {
     name: 'Neo3',
-    logo: 'https://cryptologos.cc/logos/neo-neo-logo.svg',
+    logo: '',
 }
 
 export default function Header() {

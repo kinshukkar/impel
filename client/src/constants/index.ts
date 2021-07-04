@@ -13,8 +13,8 @@ export const DEFAULT_APP_METADATA = {
 
 export const DEFAULT_CHAIN_ID = "neo3:ihavenoidea";
 export const DEFAULT_GAS_SCRIPTHASH = "0xd2a4cff31913016155e38e474a2c06d08be276cf";
-export const DEFAULT_NEO_RPC_ADDRESS = "https://127.0.0.1:50012";
-export const DEFAULT_NEO_NETWORK_MAGIC = 437485074;
+export const DEFAULT_NEO_RPC_ADDRESS = "http://127.0.0.1:50012";
+export const DEFAULT_NEO_NETWORK_MAGIC = 641041061;
 export const DEFAULT_IMPEL_SC_SCRIPTHASH = "";
 export const DEFAULT_SC_SCRIPTHASH = "";
 
