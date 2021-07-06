@@ -16,9 +16,12 @@ export default function Home() {
     const walletConnectCtx = useWalletConnect()
     const history = useHistory()
     const [loadingMyStreams, setLoadingMyStreams] = useState(false)
+    const [neoN3Data, setNeoN3Data] = useState({});
     const [senderStreams, setSenderStream] = useState<Stream[]>([])
     const [recipientStreams, setRecipientStream] = useState<Stream[]>([])
     const [loading, setLoading] = useState<string | null>('Checking WalletConnect Session')
+
+    console.log('neoN3Data---', neoN3Data);
 
     const contract = new Neon.experimental.SmartContract(
         Neon.u.HexString.fromHex(DEFAULT_SC_SCRIPTHASH),
@@ -28,6 +31,9 @@ export default function Home() {
         }
     );
 
+    const setN3Data = (data: any) => {
+        setNeoN3Data(data);
+    }
 
     useEffect(() => {
         window.addEventListener('NEOLine.N3.EVENT.READY', () => {
@@ -37,6 +43,7 @@ export default function Home() {
                 const { label, address } = result;
                 console.log('label:' + label);
                 console.log('address' + address);
+                setN3Data({ label, address });
 
                 n3.AddressToScriptHash({ address: address })
                 .then(result => {
