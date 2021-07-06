@@ -35,55 +35,56 @@ export default function App() {
     useEffect(() => {
         window.addEventListener('NEOLine.N3.EVENT.READY', () => {
             const n3 = new NEOLineN3.Init();
-            n3.pickAddress()
-            .then(result => {
-                const { label, address } = result;
-                console.log('label:' + label);
-                console.log('address' + address);
-                setN3Data({...neoN3Data, ...{ label, address }});
+            setN3Data(n3);
+            // n3.pickAddress()
+            // .then(result => {
+            //     const { label, address } = result;
+            //     console.log('label:' + label);
+            //     console.log('address' + address);
+            //     setN3Data({...neoN3Data, ...{ label, address }});
 
-                n3.AddressToScriptHash({ address: address })
-                .then(result => {
-                    const { scriptHash } = result;
-                    console.log('scriptHash' + scriptHash);
-                });
-                // .catch(({type: String, description: String, data: any}) => {
-                //     switch(type) {
-                //         case 'NO_PROVIDER':
-                //             console.log('No provider available.');
-                //             break;
-                //         case 'MALFORMED_INPUT':
-                //             console.log('Please check your input');
-                //             break;
-                //     }
-                // });
+            //     n3.AddressToScriptHash({ address: address })
+            //     .then(result => {
+            //         const { scriptHash } = result;
+            //         console.log('scriptHash' + scriptHash);
+            //     });
+            //     // .catch(({type: String, description: String, data: any}) => {
+            //     //     switch(type) {
+            //     //         case 'NO_PROVIDER':
+            //     //             console.log('No provider available.');
+            //     //             break;
+            //     //         case 'MALFORMED_INPUT':
+            //     //             console.log('Please check your input');
+            //     //             break;
+            //     //     }
+            //     // });
 
-            });
+            // });
 
-            n3.getProvider()
-            .then(provider => {
-                const {
-                    name,
-                    website,
-                    version,
-                    compatibility,
-                    extra
-                } = provider;
+            // n3.getProvider()
+            // .then(provider => {
+            //     const {
+            //         name,
+            //         website,
+            //         version,
+            //         compatibility,
+            //         extra
+            //     } = provider;
 
-                setN3Data({ ...neoN3Data, ...{
-                    name,
-                    website,
-                    version,
-                    compatibility,
-                    extra
-                }});
+            //     setN3Data({ ...neoN3Data, ...{
+            //         name,
+            //         website,
+            //         version,
+            //         compatibility,
+            //         extra
+            //     }});
             
-                console.log('Provider name: ' + name);
-                console.log('Provider website: ' + website);
-                console.log('Provider dAPI version: ' + version);
-                console.log('Provider dAPI compatibility: ' + JSON.stringify(compatibility));
-                console.log('Extra provider specific atributes: ' + JSON.stringify(compatibility));
-            })
+            //     console.log('Provider name: ' + name);
+            //     console.log('Provider website: ' + website);
+            //     console.log('Provider dAPI version: ' + version);
+            //     console.log('Provider dAPI compatibility: ' + JSON.stringify(compatibility));
+            //     console.log('Extra provider specific atributes: ' + JSON.stringify(compatibility));
+            // })
         });
     },[neoN3Data]);
 

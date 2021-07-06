@@ -22,6 +22,23 @@ const Home = ({
     const [loading, setLoading] = useState<string | null>('Checking WalletConnect Session')
 
     console.log('neoN3Data in Home component---', neoN3Data);
+    
+    useEffect(() => {
+        if (Object.keys(neoN3Data).length > 0) {
+            neoN3Data.pickAddress()
+            .then(result => {
+                const { label, address } = result;
+                console.log('label:' + label);
+                console.log('address' + address);
+
+                neoN3Data.AddressToScriptHash({ address: address })
+                .then(result => {
+                    const { scriptHash } = result;
+                    console.log('scriptHash' + scriptHash);
+                });
+            });
+        }
+    },[neoN3Data]);
 
     const contract = new Neon.experimental.SmartContract(
         Neon.u.HexString.fromHex(DEFAULT_SC_SCRIPTHASH),
