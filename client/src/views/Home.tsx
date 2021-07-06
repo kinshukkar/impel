@@ -1,6 +1,7 @@
 import {Box, Flex, HStack, Spacer, Text, VStack} from "@chakra-ui/react";
 import RadioIcon from "../components/icons/RadioIcon";
 import {Link} from "react-router-dom"
+import {useHistory} from "react-router-dom";
 import Neon, {sc} from "@cityofzion/neon-js";
 import {DEFAULT_NEO_NETWORK_MAGIC, DEFAULT_NEO_RPC_ADDRESS, DEFAULT_SC_SCRIPTHASH} from "../constants";
 import React, {useEffect, useState} from "react";
@@ -9,11 +10,15 @@ import SpinnerWithMessage from "../components/SpinnerWithMessage";
 import {Stream} from "../types/Stream";
 import LiStream from "../components/LiStream";
 
+declare var NEOLineN3: any;
+
 export default function Home() {
     const walletConnectCtx = useWalletConnect()
+    const history = useHistory()
     const [loadingMyStreams, setLoadingMyStreams] = useState(false)
     const [senderStreams, setSenderStream] = useState<Stream[]>([])
     const [recipientStreams, setRecipientStream] = useState<Stream[]>([])
+    const [loading, setLoading] = useState<string | null>('Checking WalletConnect Session')
 
     const contract = new Neon.experimental.SmartContract(
         Neon.u.HexString.fromHex(DEFAULT_SC_SCRIPTHASH),
@@ -23,9 +28,50 @@ export default function Home() {
         }
     );
 
+
+    useEffect(() => {
+        window.addEventListener('NEOLine.N3.EVENT.READY', () => {
+            const n3 = new NEOLineN3.Init();
+            n3.pickAddress()
+            .then(result => {
+                const { label, address } = result;
+                console.log('label:' + label);
+                console.log('address' + address);
+
+                n3.AddressToScriptHash({ address: address })
+                .then(result => {
+                    const { scriptHash } = result;
+                    console.log('scriptHash' + scriptHash);
+                });
+                // .catch(({type: String, description: String, data: any}) => {
+                //     switch(type) {
+                //         case 'NO_PROVIDER':
+                //             console.log('No provider available.');
+                //             break;
+                //         case 'MALFORMED_INPUT':
+                //             console.log('Please check your input');
+                //             break;
+                //     }
+                // });
+
+            })
+        });
+    });
+
+    useEffect(() => {
+
+        //setLoading("Checking WalletConnect Session")
+        if (!walletConnectCtx.loadingSession) {
+            if (!walletConnectCtx.session) {
+                history.push('/connect')
+            } else {
+                setLoading(null)
+            }
+        }
+    }, [walletConnectCtx.loadingSession, walletConnectCtx.session])
+
     useEffect(() => {
         loadMyStreams()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [walletConnectCtx, walletConnectCtx.accounts])
 
     const loadMyStreams = async () => {
@@ -38,7 +84,6 @@ export default function Home() {
 
         await loadGenericList(address, 'getSenderStreams', setSenderStream)
         await loadGenericList(address, 'getRecipientStreams', setRecipientStream)
-
         setLoadingMyStreams(false)
     }
 
@@ -85,23 +130,6 @@ export default function Home() {
         <Spacer/>
         {loadingMyStreams && <SpinnerWithMessage xl={false} message="Loading Your Streams"></SpinnerWithMessage>}
 
-        {(senderStreams.length > 0 || recipientStreams.length > 0) && (<>
-            <Text color="#004e87" fontWeight="bold" fontSize="2rem" mt="1rem">My Streams</Text>
-            <HStack my="2rem" spacing="0.75rem">
-                {!!senderStreams.length && (
-                    <VStack alignSelf="start" spacing="0.75rem" w="26rem">
-                        <Text textTransform="uppercase" fontSize="1rem" color="#004e87">As Sender</Text>
-                        {senderStreams.map(s => <LiStream key={s.id} stream={s} />)}
-                    </VStack>
-                )}
-                {!!recipientStreams.length && (
-                    <VStack alignSelf="start" spacing="0.75rem" w="26rem">
-                        <Text textTransform="uppercase" fontSize="1rem" color="#004e87">As Recipient</Text>
-                        {recipientStreams.map(s => <LiStream key={s.id} stream={s} />)}
-                    </VStack>
-                )}
-            </HStack>
-        </>)}
         <Spacer/>
     </>)
 }

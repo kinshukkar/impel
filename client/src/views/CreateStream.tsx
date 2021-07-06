@@ -55,14 +55,14 @@ export default function CreateStream() {
     const [loading, setLoading] = useState<string | null>('Checking WalletConnect Session')
 
     useEffect(() => {
-        if (!walletConnectCtx.loadingSession) {
-            if (!walletConnectCtx.session) {
-                history.push('/connectToProceed')
-            } else {
-                setLoading(null)
-            }
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        setLoading(null)
+        // if (!walletConnectCtx.loadingSession) {
+        //     if (!walletConnectCtx.session) {
+        //         history.push('/connectToProceed')
+        //     } else {
+        //         setLoading(null)
+        //     }
+        // }
     }, [walletConnectCtx.loadingSession, walletConnectCtx.session])
 
     const handleSubmit = async (e: React.SyntheticEvent) => {

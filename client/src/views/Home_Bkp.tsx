@@ -9,7 +9,7 @@ import SpinnerWithMessage from "../components/SpinnerWithMessage";
 import {Stream} from "../types/Stream";
 import LiStream from "../components/LiStream";
 
-export default function Strava() {
+export default function Home() {
     const walletConnectCtx = useWalletConnect()
     const [loadingMyStreams, setLoadingMyStreams] = useState(false)
     const [senderStreams, setSenderStream] = useState<Stream[]>([])
@@ -25,7 +25,6 @@ export default function Strava() {
 
     useEffect(() => {
         loadMyStreams()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [walletConnectCtx, walletConnectCtx.accounts])
 
     const loadMyStreams = async () => {
@@ -70,7 +69,7 @@ export default function Strava() {
         <Spacer/>
         <Text maxW="44rem" color="#004e87" fontSize={["1.4rem", "2rem"]} textAlign="center"
               fontWeight="bold" m="0.5rem" my="1rem">
-            STRAVA IS ALL LOGGED IN
+            LEADING MESSAGE
         </Text>
         <Spacer/>
         <Box bg="#0094ff" m="0.5rem"
@@ -85,23 +84,6 @@ export default function Strava() {
         <Spacer/>
         {loadingMyStreams && <SpinnerWithMessage xl={false} message="Loading Your Streams"></SpinnerWithMessage>}
 
-        {(senderStreams.length > 0 || recipientStreams.length > 0) && (<>
-            <Text color="#004e87" fontWeight="bold" fontSize="2rem" mt="1rem">My Streams</Text>
-            <HStack my="2rem" spacing="0.75rem">
-                {!!senderStreams.length && (
-                    <VStack alignSelf="start" spacing="0.75rem" w="26rem">
-                        <Text textTransform="uppercase" fontSize="1rem" color="#004e87">As Sender</Text>
-                        {senderStreams.map(s => <LiStream key={s.id} stream={s} />)}
-                    </VStack>
-                )}
-                {!!recipientStreams.length && (
-                    <VStack alignSelf="start" spacing="0.75rem" w="26rem">
-                        <Text textTransform="uppercase" fontSize="1rem" color="#004e87">As Recipient</Text>
-                        {recipientStreams.map(s => <LiStream key={s.id} stream={s} />)}
-                    </VStack>
-                )}
-            </HStack>
-        </>)}
         <Spacer/>
     </>)
 }

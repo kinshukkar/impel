@@ -8,7 +8,6 @@ import {
     ChakraProvider, Flex
 } from "@chakra-ui/react"
 import Home from "./views/Home"
-import Strava from "./views/Strava"
 import {WalletConnectContextProvider} from "@cityofzion/wallet-connect-sdk-react";
 import Header from "./components/Header";
 import CreateStream from "./views/CreateStream";
@@ -35,10 +34,7 @@ export default function App() {
                               backgroundPosition="bottom" backgroundRepeat="repeat-x">
 
                             <Switch>
-                                <Route path="/createStream">
-                                    <CreateStream/>
-                                </Route>
-                                <Route path="/strava" component={Strava}/>
+                                <Route path="/createStream" component={CreateStream}/>
                                 <Route path="/" component={Home}/>
                             </Switch>
 

@@ -38,24 +38,11 @@ export default function Header() {
         return `${address.slice(0, width)}...${address.slice(-width)}`;
     }
 
-    const openStravaAuth = () => {
-        window.open('http://127.0.0.1:9000/auth/strava', '_self');
-    }
     return (
         <Flex align="center" borderBottom="1px" borderColor="#BFD7EB" h={["3.5rem", "6rem"]} px={["1rem", "3rem"]}>
             <RLink to="/">
                 <Image src="/logo.svg" alt="Impel" h={["2rem", "3rem"]} />
             </RLink>
-            <div onClick={() => openStravaAuth()}>
-                <Image src="/logo.svg" alt="Impel" h={["2rem", "3rem"]} />
-            </div>            
-            {!!id && (<>
-                <Text display={['none', 'block']} color="#0094ff" fontWeight="bold" fontSize="1.6rem"
-                      ml="0.5rem">/stream/{id}</Text>
-                <Link onClick={copyUrl} display={['none', 'block']}>
-                    <CopyIcon boxSize="1.4rem" color="#333" ml="0.5rem" mt="0.5rem"/>
-                </Link>
-            </>)}
             <Spacer/>
             {walletConnectCtx.loadingSession ? <Spinner/> : (
                 !walletConnectCtx.session ? (
