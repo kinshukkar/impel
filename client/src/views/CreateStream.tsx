@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import PropTypes from 'prop-types';
 import {useHistory} from "react-router-dom";
 import {
     Flex,
@@ -41,7 +42,12 @@ const inputStyle = {
     height: "3.5rem",
 }
 
-export default function CreateStream() {
+const CreateStream = ({
+    neoN3Data,
+  }) => {
+
+    console.log('neoN3Data in CreateStream component---', neoN3Data);
+
     const walletConnectCtx = useWalletConnect()
     const history = useHistory()
     const toast = useToast()
@@ -167,4 +173,11 @@ export default function CreateStream() {
             </>)}
         </Flex>
     )
-}
+};
+
+CreateStream.propTypes = {
+    neoN3Data: PropTypes.object,
+};
+
+export default CreateStream;
+

@@ -1,27 +1,27 @@
+import React, {useEffect, useState} from "react";
+import PropTypes from 'prop-types';
 import {Box, Flex, HStack, Spacer, Text, VStack} from "@chakra-ui/react";
 import RadioIcon from "../components/icons/RadioIcon";
 import {Link} from "react-router-dom"
 import {useHistory} from "react-router-dom";
 import Neon, {sc} from "@cityofzion/neon-js";
 import {DEFAULT_NEO_NETWORK_MAGIC, DEFAULT_NEO_RPC_ADDRESS, DEFAULT_SC_SCRIPTHASH} from "../constants";
-import React, {useEffect, useState} from "react";
 import {useWalletConnect} from "@cityofzion/wallet-connect-sdk-react";
 import SpinnerWithMessage from "../components/SpinnerWithMessage";
 import {Stream} from "../types/Stream";
 import LiStream from "../components/LiStream";
 
-declare var NEOLineN3: any;
-
-export default function Home() {
+const Home = ({
+    neoN3Data,
+  }) => {
     const walletConnectCtx = useWalletConnect()
     const history = useHistory()
     const [loadingMyStreams, setLoadingMyStreams] = useState(false)
-    const [neoN3Data, setNeoN3Data] = useState({});
     const [senderStreams, setSenderStream] = useState<Stream[]>([])
     const [recipientStreams, setRecipientStream] = useState<Stream[]>([])
     const [loading, setLoading] = useState<string | null>('Checking WalletConnect Session')
 
-    console.log('neoN3Data---', neoN3Data);
+    console.log('neoN3Data in Home component---', neoN3Data);
 
     const contract = new Neon.experimental.SmartContract(
         Neon.u.HexString.fromHex(DEFAULT_SC_SCRIPTHASH),
@@ -30,40 +30,6 @@ export default function Home() {
             rpcAddress: DEFAULT_NEO_RPC_ADDRESS
         }
     );
-
-    const setN3Data = (data: any) => {
-        setNeoN3Data(data);
-    }
-
-    useEffect(() => {
-        window.addEventListener('NEOLine.N3.EVENT.READY', () => {
-            const n3 = new NEOLineN3.Init();
-            n3.pickAddress()
-            .then(result => {
-                const { label, address } = result;
-                console.log('label:' + label);
-                console.log('address' + address);
-                setN3Data({ label, address });
-
-                n3.AddressToScriptHash({ address: address })
-                .then(result => {
-                    const { scriptHash } = result;
-                    console.log('scriptHash' + scriptHash);
-                });
-                // .catch(({type: String, description: String, data: any}) => {
-                //     switch(type) {
-                //         case 'NO_PROVIDER':
-                //             console.log('No provider available.');
-                //             break;
-                //         case 'MALFORMED_INPUT':
-                //             console.log('Please check your input');
-                //             break;
-                //     }
-                // });
-
-            })
-        });
-    });
 
     useEffect(() => {
 
@@ -139,4 +105,10 @@ export default function Home() {
 
         <Spacer/>
     </>)
-}
+};
+
+Home.propTypes = {
+    neoN3Data: PropTypes.object,
+};
+
+export default Home;
