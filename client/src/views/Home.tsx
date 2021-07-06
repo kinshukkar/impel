@@ -6,7 +6,6 @@ import {Link} from "react-router-dom"
 import {useHistory} from "react-router-dom";
 import Neon, {sc} from "@cityofzion/neon-js";
 import {DEFAULT_NEO_NETWORK_MAGIC, DEFAULT_NEO_RPC_ADDRESS, DEFAULT_SC_SCRIPTHASH} from "../constants";
-import {useWalletConnect} from "@cityofzion/wallet-connect-sdk-react";
 import SpinnerWithMessage from "../components/SpinnerWithMessage";
 import {Stream} from "../types/Stream";
 import LiStream from "../components/LiStream";
@@ -14,7 +13,6 @@ import LiStream from "../components/LiStream";
 const Home = ({
     neoN3Data,
   }) => {
-    const walletConnectCtx = useWalletConnect()
     const history = useHistory()
     const [loadingMyStreams, setLoadingMyStreams] = useState(false)
     const [senderStreams, setSenderStream] = useState<Stream[]>([])
@@ -48,30 +46,16 @@ const Home = ({
         }
     );
 
-    useEffect(() => {
-
-        //setLoading("Checking WalletConnect Session")
-        if (!walletConnectCtx.loadingSession) {
-            if (!walletConnectCtx.session) {
-                history.push('/connect')
-            } else {
-                setLoading(null)
-            }
-        }
-    }, [walletConnectCtx.loadingSession, walletConnectCtx.session])
-
-    useEffect(() => {
-        loadMyStreams()
-    }, [walletConnectCtx, walletConnectCtx.accounts])
+    // useEffect(() => {
+    //     loadMyStreams()
+    // }, [walletConnectCtx, walletConnectCtx.accounts])
 
     const loadMyStreams = async () => {
-        if (!walletConnectCtx.accounts[0] || loadingMyStreams) return
-        const [address] = walletConnectCtx.accounts[0].split("@");
-
         setLoadingMyStreams(true)
         setSenderStream([])
         setRecipientStream([])
 
+        let address = "ABCD";
         await loadGenericList(address, 'getSenderStreams', setSenderStream)
         await loadGenericList(address, 'getRecipientStreams', setRecipientStream)
         setLoadingMyStreams(false)
@@ -110,7 +94,7 @@ const Home = ({
         <Spacer/>
         <Box bg="#0094ff" m="0.5rem"
              _hover={{textDecoration: 'none', backgroundColor: '#0081dc'}}>
-            <Link to="/createStream">
+            <Link to="">
                 <Flex align="center" p={["0.5rem 1rem", "1rem 2rem"]}>
                     <RadioIcon color="white" boxSize="2.5rem" mr="1rem"/>
                     <Text color="white" fontSize="2rem">Create a Stream</Text>
