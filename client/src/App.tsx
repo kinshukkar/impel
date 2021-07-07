@@ -6,6 +6,7 @@ import {
     Redirect,
 } from "react-router-dom"
 import { Provider } from 'react-redux';
+import { ConnectedRouter } from 'connected-react-router';
 import {
     ChakraProvider, Flex
 } from "@chakra-ui/react"
@@ -14,6 +15,12 @@ import { DEFAULT_APP_METADATA, DEFAULT_CHAIN_ID, DEFAULT_LOGGER, DEFAULT_METHODS
 import Home from "./views/Home"
 import ConnectWallet from "./views/ConnectWallet";
 import RegisterUser from "./views/RegisterUser";
+import configureStore from "./configureStore";
+
+// Create redux store with history
+
+const initialState = {};
+const store = configureStore(initialState);
 
 declare var NEOLineN3: any;
 
@@ -33,6 +40,7 @@ export default function App() {
     },[neoN3Data]);
 
     return (
+        <Provider store={store}>
         <ChakraProvider>
                 <Router>
                     <Flex direction="column" w="100vw" minH="100vh">
@@ -45,6 +53,7 @@ export default function App() {
                                 <Route path="/connectToWallet" render={(props) => <ConnectWallet neoN3Data={neoN3Data} />}/>
                                 <Route path="/registerUser" render={(props) => <RegisterUser neoN3Data={neoN3Data} />}/>
                                 <Route path="/home" render={(props) => <Home neoN3Data={neoN3Data} />}/>
+                                <Route path="/strava" render={(props) => <Home neoN3Data={neoN3Data} />}/>
                                 <Redirect
                                     to={{ pathname: '/' }}
                                 />
@@ -57,5 +66,6 @@ export default function App() {
                     </Flex>
                 </Router>
         </ChakraProvider>
+        </Provider>
     )
 }

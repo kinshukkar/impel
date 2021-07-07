@@ -5,7 +5,7 @@
 import { combineReducers } from 'redux';
 import history from '../helpers/history';
 import { connectRouter } from 'connected-react-router';
-// import globalReducer from 'containers/App/reducers/appReducer';
+import globalReducer from './appReducer';
 
 /**
  * Merges the main reducer with the router state and dynamically injected reducers
@@ -13,7 +13,7 @@ import { connectRouter } from 'connected-react-router';
 export default function createReducer() {
   const rootReducer = combineReducers({
     router: connectRouter(history),
-    // global: globalReducer,
+    global: globalReducer,
   });
 
   return rootReducer;

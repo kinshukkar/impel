@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import PropTypes from 'prop-types';
-import {Box, Flex, HStack, Spacer, Text, VStack} from "@chakra-ui/react";
+import PropTypes, { string } from 'prop-types';
+import {Box, Flex, Button, Spacer, Text, VStack} from "@chakra-ui/react";
 import RadioIcon from "../components/icons/RadioIcon";
 import {Link} from "react-router-dom"
 import {useHistory} from "react-router-dom";
@@ -9,10 +9,13 @@ import {DEFAULT_NEO_NETWORK_MAGIC, DEFAULT_NEO_RPC_ADDRESS, DEFAULT_SC_SCRIPTHAS
 import SpinnerWithMessage from "../components/SpinnerWithMessage";
 import {Stream} from "../types/Stream";
 import LiStream from "../components/LiStream";
+import { useDispatch } from "react-redux";
+import { getStravaUserDetails } from "../actions/appActions";
 
 const Home = ({
     neoN3Data,
   }) => {
+    const dispatch = useDispatch();
     const history = useHistory()
     const [loadingMyStreams, setLoadingMyStreams] = useState(false)
     const [senderStreams, setSenderStream] = useState<Stream[]>([])
@@ -92,6 +95,11 @@ const Home = ({
             Welcome to Impel
         </Text>
         <Spacer/>
+        <a href="http://localhost:9000/auth/strava">Login with Strava
+            {/* <Button colorScheme="purple" variant="solid" size="lg" onClick={(e) => handleStravaLogin(e)}>
+                Login with Strava
+            </Button> */}
+        </a>
         <Box bg="#0094ff" m="0.5rem"
              _hover={{textDecoration: 'none', backgroundColor: '#0081dc'}}>
             <Link to="">

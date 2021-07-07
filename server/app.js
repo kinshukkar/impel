@@ -58,6 +58,21 @@ passport.use(new StravaStrategy({
 app.use(passport.initialize());
 app.use(passport.session());
 
+/**
+ * -----------------------------------------------------------------------------
+ * Cross Origin Requests
+ * -----------------------------------------------------------------------------
+ */
+app.all('/*', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+});
+
+/**
+ * -----------------------------------------------------------------------------
+ * Routes
+ * -----------------------------------------------------------------------------
+ */
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 

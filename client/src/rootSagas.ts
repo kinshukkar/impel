@@ -1,12 +1,11 @@
 import { all, call, fork } from 'redux-saga/effects';
 
-// import authSaga from 'containers/App/sagas/authSaga';
+import appSaga from './sagas/appSaga';
 // import productInfoSaga from 'containers/App/sagas/productInfoSaga';
 
 function* rootSaga() {
   const sagas = [
-    // authSaga,
-    // productInfoSaga,
+    appSaga,
   ];
 
   yield all(
