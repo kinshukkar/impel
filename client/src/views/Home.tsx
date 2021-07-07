@@ -21,22 +21,22 @@ const Home = ({
 
     console.log('neoN3Data in Home component---', neoN3Data);
     
-    useEffect(() => {
-        if (Object.keys(neoN3Data).length > 0) {
-            neoN3Data.pickAddress()
-            .then(result => {
-                const { label, address } = result;
-                console.log('label:' + label);
-                console.log('address' + address);
+    // useEffect(() => {
+    //     if (Object.keys(neoN3Data).length > 0) {
+    //         neoN3Data.pickAddress()
+    //         .then(result => {
+    //             const { label, address } = result;
+    //             console.log('label:' + label);
+    //             console.log('address' + address);
 
-                neoN3Data.AddressToScriptHash({ address: address })
-                .then(result => {
-                    const { scriptHash } = result;
-                    console.log('scriptHash' + scriptHash);
-                });
-            });
-        }
-    },[neoN3Data]);
+    //             neoN3Data.AddressToScriptHash({ address: address })
+    //             .then(result => {
+    //                 const { scriptHash } = result;
+    //                 console.log('scriptHash' + scriptHash);
+    //             });
+    //         });
+    //     }
+    // },[neoN3Data]);
 
     const contract = new Neon.experimental.SmartContract(
         Neon.u.HexString.fromHex(DEFAULT_SC_SCRIPTHASH),
@@ -89,7 +89,7 @@ const Home = ({
         <Spacer/>
         <Text maxW="44rem" color="#004e87" fontSize={["1.4rem", "2rem"]} textAlign="center"
               fontWeight="bold" m="0.5rem" my="1rem">
-            LEADING MESSAGE
+            Welcome to Impel
         </Text>
         <Spacer/>
         <Box bg="#0094ff" m="0.5rem"
