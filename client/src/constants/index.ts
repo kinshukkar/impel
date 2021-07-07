@@ -19,3 +19,7 @@ export const DEFAULT_IMPEL_SC_SCRIPTHASH = "";
 export const DEFAULT_SC_SCRIPTHASH = "";
 
 export const DEFAULT_GAS_PRECISION = 10 ** 8
+
+
+export const PORT = 9000;
+export const baseApi = 'http://127.0.0.1';

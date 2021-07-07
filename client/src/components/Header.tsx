@@ -1,6 +1,5 @@
 import * as React from "react";
 import {Flex, Image, Link, Spacer, Spinner, Text, useToast} from "@chakra-ui/react";
-import {useWalletConnect} from "@cityofzion/wallet-connect-sdk-react";
 import {matchPath, useLocation, Link as RLink} from "react-router-dom";
 import CopyIcon from "./icons/CopyIcon";
 import copy from "clipboard-copy";
@@ -13,7 +12,6 @@ const chainMeta = {
 }
 
 export default function Header() {
-    const walletConnectCtx = useWalletConnect()
     let location = useLocation()
     const toast = useToast()
     const [id, setId] = useState<string | undefined>(undefined)
@@ -41,37 +39,12 @@ export default function Header() {
     return (
         <Flex align="center" borderBottom="1px" borderColor="#BFD7EB" h={["3.5rem", "6rem"]} px={["1rem", "3rem"]}>
             <RLink to="/">
-                <Image src="/logo.svg" alt="Impel" h={["2rem", "3rem"]} />
+                <Flex direction="row">
+                    <Image src="/impel.svg" alt="Impel" h={["2rem", "3rem"]} />
+                    <Text alignSelf="center" fontSize="1.5rem">Impel</Text>
+                </Flex>
             </RLink>
             <Spacer/>
-            {walletConnectCtx.loadingSession ? <Spinner/> : (
-                !walletConnectCtx.session ? (
-                    <Link fontSize={["0.9rem", "1.125rem"]} textAlign="right"
-                          onClick={() => walletConnectCtx.connect()}>Connect your Wallet</Link>
-                ) : (
-                    <Flex direction="column" align="right">
-                        {walletConnectCtx.accounts.map((account: string) => {
-                            const [address] = account.split("@");
-                            return (
-                                <Flex
-                                    key={address}
-                                    align="center"
-                                >
-                                    <Image src={chainMeta.logo} alt={chainMeta.name} title={chainMeta.name} w="1.6rem"
-                                           mr="0.5rem"/>
-                                    <Flex direction="column">
-                                        <Text fontSize="0.5rem">{walletConnectCtx.session?.peer.metadata.name}</Text>
-                                        <Text fontSize="0.8rem">{ellipseAddress(address, 4)}</Text>
-                                    </Flex>
-                                    <Link ml="0.6rem" onClick={walletConnectCtx.disconnect}>
-                                        <LogoutIcon boxSize="1.4rem" color="#004e87"/>
-                                    </Link>
-                                </Flex>
-                            );
-                        })}
-                    </Flex>
-                )
-            )}
         </Flex>
     );
 }

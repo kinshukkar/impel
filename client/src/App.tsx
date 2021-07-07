@@ -3,15 +3,24 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
+    Redirect,
 } from "react-router-dom"
+import { Provider } from 'react-redux';
+import { ConnectedRouter } from 'connected-react-router';
 import {
     ChakraProvider, Flex
 } from "@chakra-ui/react"
-import Home from "./views/Home"
 import Header from "./components/Header";
-import PairingModal from "./components/modals/PairingModal";
-import RequestModal from "./components/modals/RequestModal";
 import { DEFAULT_APP_METADATA, DEFAULT_CHAIN_ID, DEFAULT_LOGGER, DEFAULT_METHODS, DEFAULT_RELAY_PROVIDER }from "./constants";
+import Home from "./views/Home"
+import ConnectWallet from "./views/ConnectWallet";
+import RegisterUser from "./views/RegisterUser";
+import configureStore from "./configureStore";
+
+// Create redux store with history
+
+const initialState = {};
+const store = configureStore(initialState);
 
 declare var NEOLineN3: any;
 
@@ -31,6 +40,7 @@ export default function App() {
     },[neoN3Data]);
 
     return (
+        <Provider store={store}>
         <ChakraProvider>
                 <Router>
                     <Flex direction="column" w="100vw" minH="100vh">
@@ -39,17 +49,23 @@ export default function App() {
                               backgroundPosition="bottom" backgroundRepeat="repeat-x">
 
                             <Switch>
-                                <Route path="/" render={(props) => <Home neoN3Data={neoN3Data} />}/>
+                                <Route path="/" exact render={(props) => <ConnectWallet neoN3Data={neoN3Data} />}/>
+                                <Route path="/connectToWallet" render={(props) => <ConnectWallet neoN3Data={neoN3Data} />}/>
+                                <Route path="/registerUser" render={(props) => <RegisterUser neoN3Data={neoN3Data} />}/>
+                                <Route path="/home" render={(props) => <Home neoN3Data={neoN3Data} />}/>
+                                <Route path="/strava" render={(props) => <Home neoN3Data={neoN3Data} />}/>
+                                <Redirect
+                                    to={{ pathname: '/' }}
+                                />
                             </Switch>
 
-                            <Flex align="center" bg="#004e87" p={["1rem", "2rem 3.25rem"]} w="100%">
+                            <Flex align="center" bg="transparent" p={["1rem", "2rem 3.25rem"]} w="100%">
                                 
                             </Flex>
                         </Flex>
                     </Flex>
-                    <PairingModal/>
-                    <RequestModal/>
                 </Router>
         </ChakraProvider>
+        </Provider>
     )
 }
