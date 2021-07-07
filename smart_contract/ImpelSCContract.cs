@@ -9,18 +9,20 @@ using Neo.SmartContract.Framework.Services;
 
 namespace Impel
 {
-    [DisplayName("Impel.ImpelSCv0.1.46")]
+    [DisplayName("Impel.ImpelSCv0.1.56")]
     [ManifestExtra("Author", "Kinshuk Kar, Pompita Sarkar")]
     [ManifestExtra("Email", "kinshuk89@gmail.com")]
     [ManifestExtra("Description", "A novel motivation mechanism to assist people in getting fitter with social and financial rewards")]
     [ContractPermission("*", "onNEP17Payment")]
     [ContractTrust("0xd2a4cff31913016155e38e474a2c06d08be276cf")]
-    
+
     public class ImpelSCContract : SmartContract
     {
         static readonly ImpelStorage contractData = new ImpelStorage();
         private static Transaction Tx => (Transaction) Runtime.ScriptContainer;
 
+        static UInt160 IMPEL_NFT_TOKEN_CONTRACT_HASH = ToScripthash("NUSYZTF181S6GRoUj86iP3wSdnkeBfnMk4");        
+        
         [DisplayName("_deploy")]
         public static void Deploy(object data, bool update) {
             if (!update)
@@ -62,6 +64,40 @@ namespace Impel
             return (address);
         }
 
+        public static UInt160 ToScripthash(String address)
+        {
+            if ((address.ToByteArray())[0] == 0x4e)
+            {
+                var decoded = (byte[]) StdLib.Base58CheckDecode(address);
+                var Scripthash = (UInt160)decoded.Last(20);
+                return (Scripthash);
+            }
+            return null;
+        }
+
+        public static void AddChallenge(string title, ulong startTime, ulong endTime, ulong evaluationTime, Challenge.ChallengeActivityType activityType, Challenge.ChallengeType type, BigInteger value) {
+            
+            BigInteger newChallengeId = contractData.GetAndIncrementLastChallengeId();
+            Challenge newChallenge = new Challenge(title, startTime, endTime, evaluationTime, activityType, type, value);
+            contractData.PutChallenge(newChallengeId, newChallenge);
+            return;
+        }
+
+        public static void UpdateChallengeState(BigInteger challengeId) {
+            
+            Challenge challenge = contractData.GetChallenge(challengeId);
+            ulong currentTime = Ledger.GetBlock(Ledger.CurrentIndex).Timestamp;
+            if (currentTime > challenge.challengeEvaluationTime) {
+                challenge.challengeState = Challenge.ChallengeState.ChallengeStateEvaluationCompleted;
+            } else if (currentTime > challenge.challengeEndTime) {
+                challenge.challengeState = Challenge.ChallengeState.ChallengeStateCompleted;
+            } else if (currentTime > challenge.challengeStartTime) {
+                challenge.challengeState = Challenge.ChallengeState.ChallengeStateActive;                
+            } else {
+                challenge.challengeState = Challenge.ChallengeState.ChallengeStateNotStarted;                
+            }
+            contractData.PutChallenge(challengeId, challenge);
+        }
         public static void RegisterUser(string username) {
             User newUser = new User(username);
             contractData.PutUser(ToAddress((ByteString) Tx.Sender), newUser);
@@ -76,11 +112,27 @@ namespace Impel
         }
 
         public List<Challenge> GetAllChallenges() {
-            return contractData.GetAllChallenges();
+            return contractData.GetAllChallenges(false);
+        }
+
+        public List<Challenge> GetActiveChallenges() {
+            return contractData.GetAllChallenges(true);
         }
 
         public List<UserChallengeEntry> GetSubscribedEntriesForChallenge(BigInteger challengeId) {
             return contractData.GetSubscribedEntriesForChallenge(challengeId);
+        }
+
+        public List<UserChallengeEntry> GetSubscribedChallengesForUser() {
+            return contractData.GetSubscribedChallengesForUser(ToAddress((ByteString)Tx.Sender));
+        }
+        public void UpdateChallengeEntryState(BigInteger challengeId, string userKey, UserChallengeEntry.UserChallengeState state) {
+
+            string userChallengeKey = "c#" + challengeId + userKey;
+            UserChallengeEntry challengeEntry = contractData.GetChallengeEntry(userChallengeKey);
+            challengeEntry.state = state;
+            contractData.PutChallengeEntry(userChallengeKey, challengeEntry);
+            return;
         }
 
         public static void OnNEP17Payment(UInt160 from, BigInteger amount, object[] data) {
@@ -101,26 +153,49 @@ namespace Impel
         public static void FetchUserChallengeEntries()
         {
             string url = "https://raw.githubusercontent.com/kinshukkar/impel-test-data/main/test.json";
-            string filter = "$";
-            string callback = "callback";
-            object data = "data"; 
-            long gasForResponse = Oracle.MinimumResponseFee;
-
-            Oracle.Request(url, filter, callback, data, gasForResponse);
+            string filter = "";
+            string callback = "fetchUserChallengeEntriesCallback";
+            object data = ""; 
+            //long gasForResponse = Oracle.MinimumResponseFee;
+            Runtime.Log(Oracle.GetPrice().ToString());
+            Runtime.Log("Starting to call");
+            Oracle.Request(url, filter, callback, data, 10*Oracle.GetPrice());
         }
 
-        public static void FetchUserChallengeEntriesCallback(string url, string data, OracleResponseCode code, string result)
+        public static void fetchUserChallengeEntriesCallback(string url, string data, OracleResponseCode code, string result)
         {
+            Runtime.Log("Received call");
             if (Runtime.CallingScriptHash != Oracle.Hash) throw new Exception("Unauthorized!");
 
+            Runtime.Log(code.ToString());
             if (code != OracleResponseCode.Success) throw new Exception("Oracle response failure with code " + (byte)code);
 
+            Runtime.Log(result);
             object ret = StdLib.JsonDeserialize(result);
             object[] arr = (object[])ret;
             string value = (string)arr[0];
+        }
+        private static void EvaluateChallengeEntries() {
 
-            Runtime.Log("data: " + data);
-            Runtime.Log("response value: " + value);
+        }
+        private static void DistributeRewards(BigInteger challengeId, UserChallengeEntry[] winningEntries, int totalAmount) {
+
+            
+            return;
+        }
+
+        private static void AssignNFTBadgeTokens(BigInteger challengeId, UserChallengeEntry[] winningEntries) {
+            
+            Challenge challenge = contractData.GetChallenge(challengeId);
+            String tokenName = "Winner of " + challenge.challengeTitle;
+            String tokenDescription = "Badge for " + challenge.challengeTitle;
+            string tokenURL = "https://impelapp.com/images/badges/" + challengeId +".png";
+            
+            foreach (var entry in winningEntries)  {
+                string userKey = entry.userKey;
+                UInt160 userAddress = ToScripthash(userKey);
+                Contract.Call(IMPEL_NFT_TOKEN_CONTRACT_HASH, "MintAndTransfer", CallFlags.All, new object[]{tokenName, tokenDescription, tokenURL, userAddress});
+            }
         }
 
     }
@@ -178,16 +253,16 @@ namespace Impel
             challengesMap.Put( (ByteString)challengeId, Challenge.Serialize(challenge));
         }
 
-        public List<Challenge> GetAllChallenges() {
+        public List<Challenge> GetAllChallenges(bool isActive) {
             List<Challenge> challenges = new List<Challenge>();
             var iterator = challengesMap.Find(FindOptions.KeysOnly | FindOptions.RemovePrefix);
             while(iterator.Next()) {
                 BigInteger key = new BigInteger((byte[])iterator.Value); 
-                Runtime.Log("GetAllChallenges - " + key);
-                if (key < 1) {
-                    continue;
+                Challenge challenge = GetChallenge(key);
+                if (!isActive || challenge.challengeState == Challenge.ChallengeState.ChallengeStateActive) {
+                    challenges.Add(challenge);
                 } else {
-                    challenges.Add(GetChallenge(key));
+                    continue;
                 }
             }
 
@@ -197,15 +272,20 @@ namespace Impel
         public void AddUserChallengeRecord(BigInteger challengeId, string userKey, BigInteger amount) {
 
             UserChallengeEntry userChallengeRecord = new UserChallengeEntry(userKey, (int)amount);
-            string entry = StdLib.JsonSerialize(userChallengeRecord);
             string recordKey = "c#" + challengeId + userKey;
-            userChallengeMapping.Put(recordKey, entry);
+            PutChallengeEntry(recordKey, userChallengeRecord);
         }
 
         public UserChallengeEntry GetChallengeEntry(string key) {
             return (UserChallengeEntry) StdLib.JsonDeserialize(userChallengeMapping.Get(key));
 
         }
+
+        public void PutChallengeEntry(string key, UserChallengeEntry challengeEntry) {
+            string serializedEntry = StdLib.JsonSerialize(challengeEntry);
+            userChallengeMapping.Put(key, serializedEntry);
+        }
+
         public List<UserChallengeEntry> GetSubscribedEntriesForChallenge(BigInteger challengeId) {
             List<UserChallengeEntry> challengeEntries = new List<UserChallengeEntry>();
             var iterator = userChallengeMapping.Find("c#" + challengeId, FindOptions.KeysOnly | FindOptions.RemovePrefix);
@@ -216,6 +296,21 @@ namespace Impel
 
             return challengeEntries;
         }
+
+        public List<UserChallengeEntry> GetSubscribedChallengesForUser(string userKey) {
+            List<UserChallengeEntry> challengeEntries = new List<UserChallengeEntry>();
+            var iterator = userChallengeMapping.Find(FindOptions.RemovePrefix);
+           
+            while(iterator.Next()) {
+                var kvp = (object[])iterator.Value;
+                string key = (string)kvp[0];
+                Runtime.Log(key);
+                challengeEntries.Add(GetChallengeEntry(key));
+            }
+
+            return challengeEntries;
+        }
+
     }
 
     public class User {
@@ -268,7 +363,8 @@ namespace Impel
         }
 
         public enum ChallengeType {
-            ChallengeTypeMax
+            ChallengeTypeMax,
+            ChallengeTypeAggregate
         }
         public string challengeTitle;
         public ulong challengeStartTime;
