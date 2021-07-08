@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined');
+@import url('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+
+$bg_color_1: #f3f3f3;
+
+html {
+  font-family: proxima-nova, Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  margin: 0 auto;
+  background: $bg_color_1;
+}
+
+.zt-dialogue-queue {
+  .mdc-dialog__container {
+    .mdc-dialog__actions {
+      .mdc-dialog__button {
+        border-radius: 20px;
+        padding: 0 20px;
+        background-color: #f07420;
+        color: #fff;
+      }
+    }
+  }
+}
+
+.zt-top-snackbar {
+  bottom: none;
+  top: 90px;
+  height: 50px;
+
+  .mdc-snackbar__surface {
+    height: 50px;
+    background-color: #E5F5D3;
+    border: 1px solid #7CBE35;
+    border-radius: 3px;
+  }
+}

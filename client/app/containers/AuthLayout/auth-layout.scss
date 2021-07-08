@@ -1,0 +1,26 @@
+.login-layout {
+  position: relative;
+  text-align: center;
+
+  .login__box {
+
+    position: absolute;
+    width: 420px;
+    height: 360px;
+    left: calc(50vw - 240px);
+    top: calc(50vh - 220px);
+    padding: 15px 30px;
+
+    .login__box-header {
+      display: block;
+      text-align: center;
+      margin: 10px;
+
+      .login__box-icon {
+        i {
+          font-size: 50px;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,90 @@
+export const randHex = (len) => {
+  const maxlen = 8;
+  const min = 16 ** (Math.min(len, maxlen) - 1);
+  const max = (16 ** Math.min(len, maxlen)) - 1;
+  const n = Math.floor(Math.random() * (max - min + 1)) + min;
+  let r = n.toString(16);
+  while (r.length < len) {
+    r += randHex(len - maxlen);
+  }
+  return r;
+};
+
+export function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+export const generateKeyForReact = (str) => {
+  const newStr = str.replace(/[^A-Z0-9]+/ig, '_');
+  return newStr;
+};
+
+export const formatBytes = (bytes, decimals = 2) => {
+  if (bytes === 0) return '0 Bytes';
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return `${parseFloat((bytes / (k ** i)).toFixed(dm))} ${sizes[i]}`;
+};
+
+// Google Maps
+
+/**
+  * Get the city and set the city input value to the one selected
+  *
+  * @param addressArray
+  * @return {string}
+  */
+export const getCity = (addressArray) => {
+  let city = '';
+  for (let i = 0; i < addressArray.length; i += 1) {
+    if (addressArray[i].types[0] && addressArray[i].types[0] === 'administrative_area_level_2') {
+      city = addressArray[i].long_name;
+      return city;
+    }
+  }
+  return city;
+};
+
+/**
+* Get the area and set the area input value to the one selected
+*
+* @param addressArray
+* @return {string}
+*/
+export const getArea = (addressArray) => {
+  let area = '';
+  for (let i = 0; i < addressArray.length; i += 1) {
+    if (addressArray[i].types[0]) {
+      for (let j = 0; j < addressArray[i].types.length; j += 1) {
+        if (addressArray[i].types[j] === 'sublocality_level_1' || addressArray[i].types[j] === 'locality') {
+          area = addressArray[i].long_name;
+          return area;
+        }
+      }
+    }
+  }
+  return area;
+};
+/**
+* Get the address and set the address input value to the one selected
+*
+* @param addressArray
+* @return {string}
+*/
+export const getState = (addressArray) => {
+  let stateLoc = '';
+  for (let i = 0; i < addressArray.length; i += 1) {
+    for (let j = 0; j < addressArray.length; j += 1) {
+      if (addressArray[i].types[0] && addressArray[i].types[0] === 'administrative_area_level_1') {
+        stateLoc = addressArray[i].long_name;
+        return stateLoc;
+      }
+    }
+  }
+  return stateLoc;
+};

@@ -1,0 +1,51 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "airbnb"
+  ],
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "mocha": true,
+    "es6": true
+  },
+  "rules": {
+    "jsx-a11y/label-has-associated-control": "off",
+    "no-console": "off",
+    "no-unused-vars": "warn",
+    "react/forbid-prop-types": "off",
+    "react/no-array-index-key": "warn",
+    "react/jsx-no-bind": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/require-default-props": "off",
+    "camelcase":"off",
+    "space-before-function-paren": "off",
+    "import/prefer-default-export": "off",
+    "func-names": "off",
+    "arrow-body-style": "off",
+    "max-len": [2, {"code": 120, "tabWidth": 4, "ignoreUrls": true}],
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
+  },
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [
+          ["assets", "./app/assets"],
+          ["components", "./app/components"],
+          ["containers", "./app/containers"],
+          ["utils", "./app/utils"]
+        ],
+        "extensions": [".ts", ".js", ".jsx", ".json"]
+      }
+    }
+  }
+}
