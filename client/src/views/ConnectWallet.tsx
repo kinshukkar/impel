@@ -65,7 +65,7 @@ const ConnectWallet = ({
         <Text maxW="44rem" color="#004e87" fontSize={["1.4rem", "2rem"]} textAlign="center" m="0.5rem" my="1rem">
             Welcome to Impel
         </Text>
-        <Button leftIcon={<EmailIcon />} colorScheme="purple" variant="solid" size="lg" onClick={handleConnectToWallet}>
+        <Button colorScheme="purple" variant="solid" size="lg" onClick={handleConnectToWallet}>
             Connect to Neo Wallet
         </Button>
         <Spacer/>

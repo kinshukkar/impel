@@ -9,7 +9,7 @@ using Neo.SmartContract.Framework.Services;
 
 namespace Impel
 {
-    [DisplayName("Impel.ImpelSCv0.1.56")]
+    [DisplayName("Impel.ImpelSCv0.1.64")]
     [ManifestExtra("Author", "Kinshuk Kar, Pompita Sarkar")]
     [ManifestExtra("Email", "kinshuk89@gmail.com")]
     [ManifestExtra("Description", "A novel motivation mechanism to assist people in getting fitter with social and financial rewards")]
@@ -75,7 +75,7 @@ namespace Impel
             return null;
         }
 
-        public static void AddChallenge(string title, ulong startTime, ulong endTime, ulong evaluationTime, Challenge.ChallengeActivityType activityType, Challenge.ChallengeType type, BigInteger value) {
+        public static void AddChallenge(string title, ulong startTime, ulong endTime, ulong evaluationTime, Challenge.ChallengeActivityType activityType, Challenge.ChallengeType type, double value) {
             
             BigInteger newChallengeId = contractData.GetAndIncrementLastChallengeId();
             Challenge newChallenge = new Challenge(title, startTime, endTime, evaluationTime, activityType, type, value);
@@ -148,21 +148,24 @@ namespace Impel
         }
 
         public static void ValidateChallengeEntries() {
-            FetchUserChallengeEntries();
-        }
-        public static void FetchUserChallengeEntries()
-        {
-            string url = "https://raw.githubusercontent.com/kinshukkar/impel-test-data/main/test.json";
+            string url = "https://raw.githubusercontent.com/kinshukkar/i-data/main/test.json";
             string filter = "";
-            string callback = "fetchUserChallengeEntriesCallback";
-            object data = ""; 
-            //long gasForResponse = Oracle.MinimumResponseFee;
-            Runtime.Log(Oracle.GetPrice().ToString());
+            string callback = "fcecallback";
+            long gasPrice = Oracle.MinimumResponseFee;
+            FetchUserChallengeEntries(url, filter, callback, gasPrice);
+
+        }
+        public static void FetchUserChallengeEntries(string url, string filter, string callback, long gasPrice)
+        {
+            Runtime.Log(url);
+            Runtime.Log(filter);
+            Runtime.Log(callback);
+            Runtime.Log("GAS" + gasPrice);
             Runtime.Log("Starting to call");
-            Oracle.Request(url, filter, callback, data, 10*Oracle.GetPrice());
+            Oracle.Request(url, filter, callback, null, gasPrice);
         }
 
-        public static void fetchUserChallengeEntriesCallback(string url, string data, OracleResponseCode code, string result)
+        public static void fcecallback(string url, object data, OracleResponseCode code, string result)
         {
             Runtime.Log("Received call");
             if (Runtime.CallingScriptHash != Oracle.Hash) throw new Exception("Unauthorized!");
@@ -175,10 +178,41 @@ namespace Impel
             object[] arr = (object[])ret;
             string value = (string)arr[0];
         }
-        private static void EvaluateChallengeEntries() {
+        private static void EvaluateChallengeEntries(BigInteger challengeId, Map<String, Array> activityRecords, List<UserChallengeEntry> entries) {
 
+            List<UserChallengeEntry> winningEntries = new List<UserChallengeEntry>();
+            Challenge challenge = contractData.GetChallenge(challengeId);
+
+            int totalChallengeCommit = 0;
+            foreach (var entry in entries)
+            {
+                if(entry.state == UserChallengeEntry.UserChallengeState.DataNotSubmitted) {
+                    continue;
+                }
+
+                totalChallengeCommit = totalChallengeCommit + entry.commitAmount;
+                var records = (double[])activityRecords[entry.userKey];
+                int qualified = 0;
+                foreach (var record in records) {
+                    if (record > challenge.challengeValue) {
+                        qualified = 1;
+                        break;
+                    }
+                }
+                if (qualified == 1) {
+                    entry.state = UserChallengeEntry.UserChallengeState.DataSubmittedQualified;
+                    winningEntries.Add(entry);
+                } else {
+                    entry.state = UserChallengeEntry.UserChallengeState.DataSubmittedNotQualified;              
+                }
+                string entryKey = "c#" + challengeId + entry.userKey;
+                contractData.PutChallengeEntry(entryKey, entry);
+            }
+
+            DistributeRewards(challengeId, winningEntries, totalChallengeCommit);
         }
         private static void DistributeRewards(BigInteger challengeId, UserChallengeEntry[] winningEntries, int totalAmount) {
+
 
             
             return;
@@ -373,9 +407,9 @@ namespace Impel
         public ChallengeState challengeState;
         public ChallengeActivityType challengeActivityType;
         public ChallengeType challengeType;
-        public BigInteger challengeValue;
+        public double challengeValue;
 
-        public Challenge(string title, ulong startTime, ulong endTime, ulong evaluationTime, ChallengeActivityType activityType, ChallengeType type, BigInteger value) {
+        public Challenge(string title, ulong startTime, ulong endTime, ulong evaluationTime, ChallengeActivityType activityType, ChallengeType type, double value) {
             challengeTitle = title;
             challengeStartTime = startTime;
             challengeEndTime = endTime;
