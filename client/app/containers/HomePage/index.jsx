@@ -17,6 +17,7 @@ import {
   TableRow,
 } from '@material-ui/core';
 import axios from 'utils/axios-base';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,9 +37,19 @@ const HomePage = (props) => {
   const classes = useStyles();
   const { history: { push } } = props;
 
+  const {
+    userDetails,
+  } = useSelector(
+    (state) => state.global,
+  );
+
+  const { provider_address, provider_label } = userDetails;
+
+  console.log('provider_address inside--', userDetails);
+
   return (
     <Paper className={classes.root}>
-      Congratulations! You can checkout Impel now!
+      {`Congratulations ${provider_label}! You can checkout Impel now!`}
     </Paper>
   );
 };

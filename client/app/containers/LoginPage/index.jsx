@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+/* eslint-disable no-undef */
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -55,8 +56,19 @@ const LoginPage = (props) => {
   const classes = useStyles();
   const { history: { push } } = props;
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [neoN3Data, setNeoN3Data] = useState({});
+
+  const setN3Data = (data) => {
+    setNeoN3Data(data);
+  };
+
+  useEffect(() => {
+    window.addEventListener('NEOLine.N3.EVENT.READY', () => {
+      const n3 = new NEOLineN3.Init();
+      console.log('inside login', n3);
+      setN3Data(n3);
+    });
+  }, [neoN3Data]);
 
   const pushHomeRoute = () => {
     push('/home');
@@ -71,8 +83,7 @@ const LoginPage = (props) => {
     const { onUserLogin } = props;
 
     const payload = {
-      username: email,
-      password,
+      neoN3Data,
       pushRoute: pushHomeRoute,
     };
     onUserLogin(payload);

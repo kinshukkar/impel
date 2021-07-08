@@ -22,6 +22,7 @@
     "babel-preset-react-hmre": "^1.1.1",
     "bootstrap": "^4.3.1",
     "classnames": "^2.2.6",
+    "connected-react-router": "^6.9.1",
     "history": "^4.10.1",
     "immer": "^4.0.0",
     "labeled-checkbox-material-ui": "^2.2.0",

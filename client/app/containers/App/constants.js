@@ -24,4 +24,9 @@ export const USER_AUTH_CHECK_INITIATE = 'boilerplate-app/App/USER_AUTH_CHECK_INI
 export const USER_AUTH_CHECK_SUCCESS = 'boilerplate-app/App/USER_AUTH_CHECK_SUCCESS';
 export const USER_AUTH_CHECK_ERROR = 'boilerplate-app/App/USER_AUTH_CHECK_ERROR';
 
+export const USER_REGISTRATION_CHECK = 'boilerplate-app/App/USER_REGISTRATION_CHECK';
+export const USER_REGISTRATION_INITIATE = 'boilerplate-app/App/USER_REGISTRATION_INITIATE';
+export const USER_REGISTRATION_SUCCESS = 'boilerplate-app/App/USER_REGISTRATION_SUCCESS';
+export const USER_REGISTRATION_ERROR = 'boilerplate-app/App/USER_REGISTRATION_ERROR';
+
 export const USER_AUTH_CLEAR = 'boilerplate-app/App/USER_AUTH_CLEAR';

@@ -32,6 +32,10 @@ import {
   USER_AUTH_CHECK_ERROR,
 
   USER_AUTH_CLEAR,
+  USER_REGISTRATION_CHECK,
+  USER_REGISTRATION_INITIATE,
+  USER_REGISTRATION_SUCCESS,
+  USER_REGISTRATION_ERROR,
 } from './constants';
 
 export const userLogin = (payload) => {
@@ -115,5 +119,30 @@ export const userAuthCheckError = (error) => {
 export const userAuthClear = () => {
   return {
     type: USER_AUTH_CLEAR,
+  };
+};
+
+export const userRegistrationCheck = () => {
+  return {
+    type: USER_REGISTRATION_CHECK,
+  };
+};
+
+export const userRegistrationInitiate = () => {
+  return {
+    type: USER_REGISTRATION_INITIATE,
+  };
+};
+
+export const userRegistrationSuccess = () => {
+  return {
+    type: USER_REGISTRATION_SUCCESS,
+  };
+};
+
+export const userRegistrationError = (error) => {
+  return {
+    type: USER_REGISTRATION_ERROR,
+    error,
   };
 };
