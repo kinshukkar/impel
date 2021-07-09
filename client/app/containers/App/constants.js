@@ -9,24 +9,24 @@
  * export const YOUR_ACTION_CONSTANT = 'yourproject/YourContainer/YOUR_ACTION_CONSTANT';
  */
 
-export const USER_LOGIN = 'boilerplate-app/App/USER_LOGIN';
-export const USER_LOGIN_INITIATE = 'boilerplate-app/App/USER_LOGIN_INITIATE';
-export const USER_LOGIN_SUCCESS = 'boilerplate-app/App/USER_LOGIN_SUCCESS';
-export const USER_LOGIN_ERROR = 'boilerplate-app/App/USER_LOGIN_ERROR';
+export const USER_LOGIN = 'impel-app/App/USER_LOGIN';
+export const USER_LOGIN_INITIATE = 'impel-app/App/USER_LOGIN_INITIATE';
+export const USER_LOGIN_SUCCESS = 'impel-app/App/USER_LOGIN_SUCCESS';
+export const USER_LOGIN_ERROR = 'impel-app/App/USER_LOGIN_ERROR';
 
-export const USER_LOGOUT = 'boilerplate-app/App/USER_LOGOUT';
-export const USER_LOGOUT_INITIATE = 'boilerplate-app/App/USER_LOGOUT_INITIATE';
-export const USER_LOGOUT_SUCCESS = 'boilerplate-app/App/USER_LOGOUT_SUCCESS';
-export const USER_LOGOUT_ERROR = 'boilerplate-app/App/USER_LOGOUT_ERROR';
+export const USER_LOGOUT = 'impel-app/App/USER_LOGOUT';
+export const USER_LOGOUT_INITIATE = 'impel-app/App/USER_LOGOUT_INITIATE';
+export const USER_LOGOUT_SUCCESS = 'impel-app/App/USER_LOGOUT_SUCCESS';
+export const USER_LOGOUT_ERROR = 'impel-app/App/USER_LOGOUT_ERROR';
 
-export const USER_AUTH_CHECK = 'boilerplate-app/App/USER_AUTH_CHECK';
-export const USER_AUTH_CHECK_INITIATE = 'boilerplate-app/App/USER_AUTH_CHECK_INITIATE';
-export const USER_AUTH_CHECK_SUCCESS = 'boilerplate-app/App/USER_AUTH_CHECK_SUCCESS';
-export const USER_AUTH_CHECK_ERROR = 'boilerplate-app/App/USER_AUTH_CHECK_ERROR';
+export const USER_AUTH_CHECK = 'impel-app/App/USER_AUTH_CHECK';
+export const USER_AUTH_CHECK_INITIATE = 'impel-app/App/USER_AUTH_CHECK_INITIATE';
+export const USER_AUTH_CHECK_SUCCESS = 'impel-app/App/USER_AUTH_CHECK_SUCCESS';
+export const USER_AUTH_CHECK_ERROR = 'impel-app/App/USER_AUTH_CHECK_ERROR';
 
-export const USER_REGISTRATION_CHECK = 'boilerplate-app/App/USER_REGISTRATION_CHECK';
-export const USER_REGISTRATION_INITIATE = 'boilerplate-app/App/USER_REGISTRATION_INITIATE';
-export const USER_REGISTRATION_SUCCESS = 'boilerplate-app/App/USER_REGISTRATION_SUCCESS';
-export const USER_REGISTRATION_ERROR = 'boilerplate-app/App/USER_REGISTRATION_ERROR';
+export const USER_REGISTRATION_CHECK = 'impel-app/App/USER_REGISTRATION_CHECK';
+export const USER_REGISTRATION_INITIATE = 'impel-app/App/USER_REGISTRATION_INITIATE';
+export const USER_REGISTRATION_SUCCESS = 'impel-app/App/USER_REGISTRATION_SUCCESS';
+export const USER_REGISTRATION_ERROR = 'impel-app/App/USER_REGISTRATION_ERROR';
 
-export const USER_AUTH_CLEAR = 'boilerplate-app/App/USER_AUTH_CLEAR';
+export const USER_AUTH_CLEAR = 'impel-app/App/USER_AUTH_CLEAR';

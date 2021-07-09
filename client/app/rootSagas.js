@@ -1,11 +1,13 @@
 import { all, call, fork } from 'redux-saga/effects';
 
 import globalSaga from 'containers/App/saga';
+import homeSaga from 'containers/HomePage/saga';
 
 
 function* rootSaga() {
   const sagas = [
     globalSaga,
+    homeSaga,
   ];
 
   yield all(

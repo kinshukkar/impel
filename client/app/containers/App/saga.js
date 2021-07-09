@@ -29,9 +29,12 @@ import {
 
 export function* userLogoutSaga() {
   yield call([localStorage, 'removeItem'], 'provider_address');
+  yield call([localStorage, 'removeItem'], 'provider_label');
   yield call([localStorage, 'removeItem'], 'persist:root');
-  yield put(push('/auth/login'));
   yield put(userLogoutSuccess());
+  yield put(push('/auth/login'));
+  // hack
+  window.location.reload();
 }
 
 function* sendLoginRequest(neoN3Data, pushRoute) {

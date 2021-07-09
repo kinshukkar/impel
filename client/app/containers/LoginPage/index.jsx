@@ -19,6 +19,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { userLogin } from 'containers/App/actions';
 import appLogo from 'assets/impel.svg';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
   '@global': {
@@ -104,8 +105,11 @@ const LoginPage = (props) => {
           variant="contained"
           color="primary"
           className={classes.submit}
+          disabled={Object.keys(neoN3Data).length === 0}
           onClick={(e) => handleLogin(e)}
         >
+          {Object.keys(neoN3Data).length === 0
+            && <CircularProgress size={16} />}
           Connect to Neo Wallet
         </Button>
         {/* <Grid container>
