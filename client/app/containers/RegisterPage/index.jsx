@@ -15,6 +15,8 @@ import { makeStyles } from '@material-ui/core/styles';
 // import LabeledCheckboxMaterialUi from 'labeled-checkbox-material-ui';
 import appLogo from 'assets/impel.svg';
 import axios from 'utils/axios-base';
+import { useDispatch } from 'react-redux';
+import { userRegistrationCheck } from '../App/actions';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -54,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
 
 const RegisterPage = (props) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const { history: { push } } = props;
 
   const [name, setName] = useState('');
@@ -66,27 +69,13 @@ const RegisterPage = (props) => {
     setName('');
   };
 
-  const pushToPrintersRoute = () => {
+  const pushToHomeRoute = () => {
     push('/home');
   };
 
   const handleRegister = () => {
-    const payload = {
-      name,
-    };
-    axios.post('/register', payload)
-      .then((res) => {
-        console.log(res);
-        clearFields();
-        // eslint-disable-next-line no-alert
-        alert('You have successfully Registered as a Printer Provider!');
-        pushToPrintersRoute();
-      })
-      .catch((err) => {
-        console.error(err);
-        // eslint-disable-next-line no-alert
-        alert('Error in api call', err);
-      });
+    dispatch(userRegistrationCheck());
+    pushToHomeRoute();
   };
 
   return (

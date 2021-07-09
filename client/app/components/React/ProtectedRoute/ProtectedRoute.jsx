@@ -11,13 +11,30 @@ const ProtectedRoute = ({
     <Route
       /* eslint react/jsx-props-no-spreading: 0 */
       {...rest}
-      render={(props) => (centralAuth.isAuthenticated === true ? (
-        <Component />
-      ) : (
-        <Redirect
-          to={{ pathname: '/auth/login', state: { from: props.location } }}
-        />
-      ))}
+      // render={(props) => (centralAuth.isAuthenticated === true ? (
+      //   <Component />
+      // ) : (
+      //   <Redirect
+      //     to={{ pathname: '/auth/login', state: { from: props.location } }}
+      //   />
+      // ))}
+      render={(props) => {
+        if (centralAuth.isAuthenticated === true && centralAuth.isUserRegistered === true) {
+          return <Component />;
+        }
+        if (centralAuth.isAuthenticated === true && centralAuth.isUserRegistered === false) {
+          return (
+            <Redirect
+              to={{ pathname: '/auth/register', state: { from: props.location } }}
+            />
+          );
+        }
+        return (
+          <Redirect
+            to={{ pathname: '/auth/login', state: { from: props.location } }}
+          />
+        );
+      }}
     />
   );
 };

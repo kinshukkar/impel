@@ -74,8 +74,9 @@ function* sendLoginRequest(neoN3Data, pushRoute) {
   } else {
     yield put(userAuthCheckError());
   }
-  yield put(pushRoute());
   yield put(userRegistrationSuccess());
+  // yield put(userRegistrationError());
+  yield put(pushRoute());
 }
 
 

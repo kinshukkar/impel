@@ -23,15 +23,16 @@ import AuthLayout from 'containers/AuthLayout/loadable';
 import {
   makeSelectIsAuthenticated,
   makeSelectIsLoginFetching,
+  makeSelectIsUserRegistered,
 } from 'containers/App/selectors';
 import { userAuthCheck } from 'containers/App/actions';
-
 import '../../global-styles.scss';
 
 
 const App = (props) => {
   const {
     isAuthenticated,
+    isUserRegistered,
     isLoginFetching,
     tryAutoLogin,
   } = props;
@@ -54,7 +55,7 @@ const App = (props) => {
             <Switch>
               <Route path="/auth" component={AuthLayout} />
               <ProtectedRoute
-                centralAuth={{ isAuthenticated }}
+                centralAuth={{ isAuthenticated, isUserRegistered }}
                 path="/"
                 component={MainLayout}
               />
@@ -68,6 +69,7 @@ const App = (props) => {
 
 App.propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
+  isUserRegistered: PropTypes.bool,
   isLoginFetching: PropTypes.bool.isRequired,
   tryAutoLogin: PropTypes.func.isRequired,
 };
@@ -75,6 +77,7 @@ App.propTypes = {
 const mapStateToProps = createStructuredSelector({
   isAuthenticated: makeSelectIsAuthenticated(),
   isLoginFetching: makeSelectIsLoginFetching(),
+  isUserRegistered: makeSelectIsUserRegistered(),
 });
 
 export const mapDispatchToProps = (dispatch) => {
