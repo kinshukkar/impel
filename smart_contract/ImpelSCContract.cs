@@ -9,7 +9,7 @@ using Neo.SmartContract.Framework.Services;
 
 namespace Impel
 {
-    [DisplayName("Impel.ImpelSCv0.1.65")]
+    [DisplayName("Impel.ImpelSCv0.1")]
     [ManifestExtra("Author", "Kinshuk Kar, Pompita Sarkar")]
     [ManifestExtra("Email", "kinshuk89@gmail.com")]
     [ManifestExtra("Description", "A novel motivation mechanism to assist people in getting fitter with social and financial rewards")]
@@ -21,7 +21,7 @@ namespace Impel
         static readonly ImpelStorage contractDataManager = new ImpelStorage();
         private static Transaction Tx => (Transaction) Runtime.ScriptContainer;
 
-        static UInt160 IMPEL_NFT_TOKEN_CONTRACT_HASH = ToScripthash("NUSYZTF181S6GRoUj86iP3wSdnkeBfnMk4");        
+        static UInt160 IMPEL_NFT_TOKEN_CONTRACT_HASH = ToScripthash("NM9D5C2wdjgiN6EkcWmRccMh7TX5V9zTen");        
         
         [DisplayName("_deploy")]
         public static void deploy(object data, bool update) {
@@ -36,9 +36,6 @@ namespace Impel
             contractDataManager.PutOwner(ToAddress((ByteString) Tx.Sender));
             contractDataManager.ResetLastChallengeId();
             BigInteger newChallengeId = contractDataManager.GetAndIncrementLastChallengeId();
-            Challenge dummyChallenge = Challenge.getTestChallenge();
-            contractDataManager.PutChallenge(newChallengeId, dummyChallenge);
-
         }
 
         public static void updateContract(ByteString nefFile, string manifest) {
@@ -457,11 +454,6 @@ namespace Impel
 
         public static Challenge Deserialize(string json) {
             return (Challenge) StdLib.JsonDeserialize(json);
-        }
-
-        public static Challenge getTestChallenge()  {
-            Challenge newChallenge = new Challenge("June 5K Challenge", 1624559400000, 1624991400000, 1625164200000, ChallengeActivityType.ChallengeActivityTypeWalkRun, ChallengeType.ChallengeTypeMax, 5);
-            return newChallenge;
         }
     }
 }

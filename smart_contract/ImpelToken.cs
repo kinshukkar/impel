@@ -8,7 +8,7 @@ using Neo.SmartContract.Framework.Services;
 
 namespace Impel
 {
-    [DisplayName("Impel.ImpelTokenv0.1.2")]
+    [DisplayName("Impel.ImpelToken")]
     [SupportedStandards("NEP-11")]
     [ContractPermission("*", "onNEP11Payment")]
     public class ImpelToken : SmartContract
