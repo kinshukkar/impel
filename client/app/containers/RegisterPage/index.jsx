@@ -76,9 +76,9 @@ const RegisterPage = (props) => {
   const handleRegister = () => {
     const payload = {
       user_name: name,
+      pushRoute: pushToHomeRoute,
     };
     dispatch(userRegister(payload));
-    pushToHomeRoute();
   };
 
   return (

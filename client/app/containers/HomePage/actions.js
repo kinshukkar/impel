@@ -16,14 +16,14 @@
  */
 
 import {
-  GET_CHALLENGES,
+  GET_ACTIVE_CHALLENGES,
   UPDATE_HOME_REDUCER,
   RESET_HOME_STATE,
 } from './constants';
 
-export const getChallenges = (payload) => {
+export const getAllActiveChallenges = (payload) => {
   return {
-    type: GET_CHALLENGES,
+    type: GET_ACTIVE_CHALLENGES,
     payload,
   };
 };

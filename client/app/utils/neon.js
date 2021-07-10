@@ -1,7 +1,7 @@
 /* eslint-disable prefer-destructuring */
 
 import Neon, {
-  sc, wallet, rpc,
+  sc, wallet, rpc, tx,
 } from '@cityofzion/neon-js';
 
 console.log('Neon---', Neon);
@@ -27,11 +27,11 @@ async function createTransaction(account, contract, operation, params) {
   const networkFee = 0;
   const currentHeight = await config.rpcClient.getBlockCount();
 
-  const transaction = new Neon.tx.Transaction({
+  const transaction = new tx.Transaction({
     signers: [
       {
         account: account.scriptHash,
-        scopes: Neon.tx.WitnessScope.CalledByEntry,
+        scopes: tx.WitnessScope.CalledByEntry,
       },
     ],
     validUntilBlock: currentHeight + 1000,
@@ -76,7 +76,7 @@ async function createTransaction(account, contract, operation, params) {
   const invokeFunctionResponse = await config.rpcClient.invokeScript(Neon.u.HexString.fromHex(transaction.script), [
     {
       account: account.scriptHash,
-      scopes: Neon.tx.WitnessScope.CalledByEntry,
+      scopes: tx.WitnessScope.CalledByEntry,
     },
   ]);
   if (invokeFunctionResponse.state !== 'HALT') {
@@ -106,7 +106,7 @@ async function createTransaction(account, contract, operation, params) {
   return result;
 }
 
-const createUser = (userAddress, username) => {
+export const createUser = (userAddress, username) => {
   return createTransaction(config.account, config.impelScriptHash, 'registerUser', [
     sc.ContractParam.string(userAddress),
     sc.ContractParam.string(username),
@@ -184,11 +184,13 @@ export async function getChallenges(active) {
     challenges.push(challenge);
   }
 
+  console.log('challenges---', challenges);
+
   return challenges;
 }
 
 // console.log(await getAllChallenges());
-async function getActiveChallenges() {
+export async function getActiveChallenges() {
   return getChallenges(true);
 }
 
@@ -222,4 +224,28 @@ async function getChallengeDetails(challengeId) {
   const elements = JSON.parse(Neon.u.base642utf8(result));
 
   return parse_challenge(elements);
+}
+
+async function getUserChallenges(address) {
+  const result = await config.rpcClient.invokeFunction(
+    config.impelScriptHash,
+    'getSubscribedChallengesForUser',
+    [Neon.sc.ContractParam.string(address)],
+  );
+
+  const allEntries = result.stack[0].value;
+  const entries = [];
+  for (let i = allEntries.length - 1; i >= 0; i - 1) {
+    const elements = allEntries[i].value;
+
+    const entry = {};
+    entry.user = Neon.u.base642utf8(elements[0].value);
+    entry.challengeId = parseInt(elements[1].value, 10);
+    entry.commitAmount = elements[2].value / 100000000;
+    entry.state = parseInt(elements[3].value, 10);
+
+    entries.push(entry);
+  }
+
+  return entries;
 }

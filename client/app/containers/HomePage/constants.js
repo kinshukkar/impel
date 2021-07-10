@@ -9,7 +9,7 @@
  * export const YOUR_ACTION_CONSTANT = 'yourproject/YourContainer/YOUR_ACTION_CONSTANT';
  */
 
-export const GET_CHALLENGES = 'impel-app/Home/GET_CHALLENGES';
+export const GET_ACTIVE_CHALLENGES = 'impel-app/Home/GET_ACTIVE_CHALLENGES';
 
 export const UPDATE_HOME_REDUCER = 'impel-app/Home/UPDATE_HOME_REDUCER';
 export const RESET_HOME_STATE = 'impel-app/Home/RESET_HOME_STATE';

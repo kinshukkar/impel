@@ -29,11 +29,6 @@ import mainRoutes from './routes';
 
 const drawerWidth = 240;
 
-function getProviderName() {
-  const provider_name = localStorage.getItem('provider_name');
-  return provider_name;
-}
-
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -98,7 +93,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
-    margin: '30px 90px',
+    margin: '30px 0 0 90px',
   },
   copyright: {
     position: 'fixed',
@@ -150,12 +145,14 @@ const MainLayout = (props) => {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap>
-            {`Welcome ${user_name} `}
+            Welcome to Impel
           </Typography>
           <Typography component="h4" variant="h6" color="inherit" noWrap className={classes.title} style={{ fontSize: 14, marginLeft: 20 }}>
             Experience Fitmess Excellence and Claim Rewards now
           </Typography>
-          {getProviderName()}
+          <Typography component="h1" variant="h6" color="inherit" noWrap>
+            {user_name}
+          </Typography>
           <IconButton color="inherit" title="Logout" onClick={() => onUserLogout()}>
             <InputIcon />
           </IconButton>

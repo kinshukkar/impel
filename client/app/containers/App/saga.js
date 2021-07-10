@@ -6,7 +6,7 @@ import {
 } from 'redux-saga/effects';
 import { cloneDeep } from 'lodash';
 import { push } from 'connected-react-router';
-import { getUser } from 'utils/neon';
+import { getUser, createUser } from 'utils/neon';
 import {
   USER_LOGIN,
   USER_LOGOUT,
@@ -63,14 +63,26 @@ function* userRegistrationCheckSaga() {
 }
 
 function* userRegisterSaga(action) {
-  const { user_name } = action.payload;
-  yield localStorage.setItem(
-    'user_name',
-    user_name,
-  );
-  yield put(userRegistrationSuccess({
-    user_name,
-  }));
+  const { user_name, pushRoute } = action.payload;
+  const globalState = yield select(makeSelectGlobal());
+  const { walletDetails } = cloneDeep(globalState);
+  const {
+    provider_address,
+  } = walletDetails;
+  try {
+    const response = yield createUser(provider_address, user_name);
+    console.log('response--', response);
+    yield localStorage.setItem(
+      'user_name',
+      user_name,
+    );
+    yield put(userRegistrationSuccess({
+      user_name,
+    }));
+    yield put(pushRoute());
+  } catch (err) {
+    console.log('User could not be registered--', err);
+  }
 }
 
 

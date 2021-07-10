@@ -17,8 +17,8 @@ import {
 
 // The initial state of the App
 export const initialState = {
-  isChallengesFetching: '',
-  challenges: [],
+  getActiveChallengesStatus: '',
+  activeChallenges: [],
 };
 
 /* eslint-disable default-case, no-param-reassign */

@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   withRouter,
 } from 'react-router-dom';
@@ -13,9 +13,10 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
-import axios from 'utils/axios-base';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import ImpelCard from 'components/ImpelCard';
 import config from 'utils/neon';
+import { getAllActiveChallenges } from './actions';
 
 function TabPanel(props) {
   const {
@@ -68,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
 
 const HomePage = (props) => {
   const classes = useStyles();
-  const theme = useTheme();
+  const dispatch = useDispatch();
   const { history: { push } } = props;
 
   const {
@@ -78,69 +79,78 @@ const HomePage = (props) => {
     (state) => state.global,
   );
 
-  const { provider_address, provider_label } = walletDetails;
-  const { user_name } = userDetails;
+  const {
+    getActiveChallengesStatus,
+    activeChallenges,
+  } = useSelector(
+    (state) => state.home,
+  );
+
   const [value, setValue] = React.useState(0);
 
-  console.log('provider_address inside--', walletDetails);
+  console.log('getActiveChallengesStatus--', getActiveChallengesStatus, 'activeChallenges--', activeChallenges);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-  const allChallenges = [
-    {
-      id: 1,
-      title: 'July 10K Challenge',
-      startTime: '1 Jul 2021, 00:00:00',
-      endTime: '31 Jul 2021, 00:00:00',
-      evaluationTime: '15 Aug 2021, 00:00:00',
-      activityType: 0,
-      state: 0,
-      type: 0,
-      avatarId: 1,
-      value: 10000,
-    },
-    {
-      id: 2,
-      title: 'July 5K Challenge',
-      startTime: '1 Jul 2021, 00:00:00',
-      endTime: '31 Jul 2021, 00:00:00',
-      evaluationTime: '15 Aug 2021, 00:00:00',
-      activityType: 0,
-      state: 0,
-      type: 0,
-      avatarId: 1,
-      value: 10000,
-    },
-    {
-      id: 3,
-      title: 'Aug Sprint Marathon',
-      startTime: '1 Aug 2021, 00:00:00',
-      endTime: '31 Aug 2021, 00:00:00',
-      evaluationTime: '15 Sept 2021, 00:00:00',
-      activityType: 0,
-      state: 0,
-      type: 0,
-      avatarId: 2,
-      value: 10000,
-    },
-  ];
+  useEffect(() => {
+    dispatch(getAllActiveChallenges());
+  });
 
-  const activeChallenges = [
-    {
-      id: 3,
-      title: 'Aug Sprint Marathon',
-      startTime: '1 Aug 2021, 00:00:00',
-      endTime: '31 Aug 2021, 00:00:00',
-      evaluationTime: '15 Sept 2021, 00:00:00',
-      activityType: 0,
-      state: 0,
-      type: 0,
-      avatarId: 2,
-      value: 10000,
-    },
-  ];
+  // const allChallenges = [
+  //   {
+  //     id: 1,
+  //     title: 'July 10K Challenge',
+  //     startTime: '1 Jul 2021, 00:00:00',
+  //     endTime: '31 Jul 2021, 00:00:00',
+  //     evaluationTime: '15 Aug 2021, 00:00:00',
+  //     activityType: 0,
+  //     state: 0,
+  //     type: 0,
+  //     avatarId: 1,
+  //     value: 10000,
+  //   },
+  //   {
+  //     id: 2,
+  //     title: 'July 5K Challenge',
+  //     startTime: '1 Jul 2021, 00:00:00',
+  //     endTime: '31 Jul 2021, 00:00:00',
+  //     evaluationTime: '15 Aug 2021, 00:00:00',
+  //     activityType: 0,
+  //     state: 0,
+  //     type: 0,
+  //     avatarId: 1,
+  //     value: 10000,
+  //   },
+  //   {
+  //     id: 3,
+  //     title: 'Aug Sprint Marathon',
+  //     startTime: '1 Aug 2021, 00:00:00',
+  //     endTime: '31 Aug 2021, 00:00:00',
+  //     evaluationTime: '15 Sept 2021, 00:00:00',
+  //     activityType: 0,
+  //     state: 0,
+  //     type: 0,
+  //     avatarId: 2,
+  //     value: 10000,
+  //   },
+  // ];
+
+  // const activeChallenges = [
+  //   {
+  //     id: 3,
+  //     title: 'Aug Sprint Marathon',
+  //     startTime: '1 Aug 2021, 00:00:00',
+  //     endTime: '31 Aug 2021, 00:00:00',
+  //     evaluationTime: '15 Sept 2021, 00:00:00',
+  //     activityType: 0,
+  //     state: 0,
+  //     type: 0,
+  //     avatarId: 2,
+  //     value: 10000,
+  //   },
+  // ];
 
   return (
     <div className={classes.root}>
@@ -158,7 +168,8 @@ const HomePage = (props) => {
         </Tabs>
         <TabPanel value={value} index={0}>
           <Grid container className="cards">
-            {allChallenges.map((item, key) => {
+            {getActiveChallengesStatus === 'loading' && <CircularProgress />}
+            {getActiveChallengesStatus === 'success' && activeChallenges.map((item, key) => {
               return (
                 <Grid key={item.id} item xs={3}>
                   <ImpelCard data={item} />
