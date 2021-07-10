@@ -98,7 +98,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
-    margin: '20px',
+    margin: '30px 90px',
   },
   copyright: {
     position: 'fixed',
@@ -149,10 +149,10 @@ const MainLayout = (props) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            {`Welcome ${user_name}`}
+          <Typography component="h1" variant="h6" color="inherit" noWrap>
+            {`Welcome ${user_name} `}
           </Typography>
-          <Typography component="h4" variant="h6" color="inherit" noWrap style={{ fontSize: 14 }}>
+          <Typography component="h4" variant="h6" color="inherit" noWrap className={classes.title} style={{ fontSize: 14, marginLeft: 20 }}>
             Experience Fitmess Excellence and Claim Rewards now
           </Typography>
           {getProviderName()}
@@ -161,7 +161,7 @@ const MainLayout = (props) => {
           </IconButton>
         </Toolbar>
       </AppBar>
-      <Drawer
+      {/* <Drawer
         variant="permanent"
         classes={{
           paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
@@ -181,7 +181,7 @@ const MainLayout = (props) => {
         <List>
           <SideNavBar />
         </List>
-      </Drawer>
+      </Drawer> */}
 
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />

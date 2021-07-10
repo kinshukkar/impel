@@ -7,6 +7,8 @@ const ProtectedRoute = ({
   centralAuth,
   ...rest
 }) => {
+  console.log('centralAuth isAuthenticated--', centralAuth.isAuthenticated);
+  console.log('centralAuth isUserRegistered--', centralAuth.isUserRegistered);
   return (
     <Route
       /* eslint react/jsx-props-no-spreading: 0 */

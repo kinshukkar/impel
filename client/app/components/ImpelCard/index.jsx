@@ -16,7 +16,6 @@ import { green } from '@material-ui/core/colors';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 import Avatar1 from 'assets/images/avatars/avatar1.jpg';
 import Avatar2 from 'assets/images/avatars/avatar2.jpg';
@@ -72,11 +71,6 @@ const ImpelCard = (props) => {
             <DirectionsRunIcon />
           </Avatar>
 )}
-        action={(
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
-)}
         title={data.title}
         subheader={(
           <>
@@ -102,7 +96,17 @@ const ImpelCard = (props) => {
           <span className={classes.dark}>{new Date(data.evaluationTime).toDateString()}</span>
         </div>
       </CardContent>
-      <CardActions disableSpacing>
+      <CardActions disableSpacing style={{ padding: 16 }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex' }}>
+            <div style={{ marginRight: 5, color: 'rgba(0, 0, 0, 0.54)' }}>Starts on: </div>
+            <div className={classes.dark}>{new Date(data.startTime).toDateString()}</div>
+          </div>
+          <div style={{ display: 'flex' }}>
+            <div style={{ marginRight: 5, color: 'rgba(0, 0, 0, 0.54)' }}>Ends on: </div>
+            <div className={classes.dark}>{new Date(data.endTime).toDateString()}</div>
+          </div>
+        </div>
         <Button variant="contained" color="primary" style={{ marginLeft: 'auto' }}>
           Join
         </Button>

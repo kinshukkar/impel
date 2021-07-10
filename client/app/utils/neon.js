@@ -1,12 +1,14 @@
 /* eslint-disable prefer-destructuring */
 
-import Neon, { sc, wallet, rpc } from '@cityofzion/neon-js';
+import Neon, {
+  sc, wallet, rpc,
+} from '@cityofzion/neon-js';
 
 console.log('Neon---', Neon);
 
-const config = {
+export const config = {
   networkMagic: 844378958,
-  impelScriptHash: '9749d32f230493afa5c0e86851f9e13f68cf21f8',
+  impelScriptHash: '71bcee095263b1dbb7270cf510a35525d58826f4',
   impelTokenScriptHash: '13b56017d9f177c2020821afad231d211b20790d',
   rpcAddress: 'http://seed2t.neo.org:20332',
   walletWif: 'KxxedRx1rJ9dZ4ptfXgYVSsLjkPud3ZxgZzdkbN1JGVk6MdbM7F8',
@@ -135,20 +137,23 @@ function format_datetime(s) {
 
 // console.log(await getUser("NfibB9s6UNQc7n7UK1C4zHiiVKuYJ3QBgc"));
 // console.log(await getUser("NZUPUkpWvxTacv9p7hqBtpCuxHAHfGrnyU"));
-export async function getUser(address) {
+export const getUser = async (address) => {
   console.log('address--', address);
   console.log('str--', `B*${address}`);
   console.log('hexstring--', Neon.u.str2hexstring(`B*${address}`));
-  const result = await config.rpcClient.getStorage(
-			  config.impelScriptHash,
-			  Neon.u.str2hexstring(`B*${address}`),
-  );
-  console.log('getUser result--', result);
+  try {
+    const result = await config.rpcClient.getStorage(
+      config.impelScriptHash,
+      Neon.u.str2hexstring(`B*${address}`),
+    );
+    console.log('getUser result--', result);
+    return JSON.parse(Neon.u.base642utf8(result))[0];
+  } catch (err) {
+    return undefined;
+  }
+};
 
-  return JSON.parse(Neon.u.base642utf8(result))[0];
-}
-
-async function getChallenges(active) {
+export async function getChallenges(active) {
   let func = '';
   if (active) {
     func = 'getActiveChallenges';

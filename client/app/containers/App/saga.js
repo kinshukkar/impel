@@ -2,8 +2,9 @@ import {
   put,
   call,
   takeLatest,
+  select,
 } from 'redux-saga/effects';
-import axios from 'utils/axios-base';
+import { cloneDeep } from 'lodash';
 import { push } from 'connected-react-router';
 import { getUser } from 'utils/neon';
 import {
@@ -29,6 +30,7 @@ import {
   userRegistrationCheck,
   // userAuthClear,
 } from './actions';
+import { makeSelectGlobal } from './selectors';
 
 function* userLogoutSaga() {
   yield call([localStorage, 'removeItem'], 'provider_address');
@@ -43,16 +45,21 @@ function* userLogoutSaga() {
 // check if user registered and associated with this wallet
 function* userRegistrationCheckSaga() {
   console.log('inside userRegistrationCheckSaga');
-  const response = yield getUser('NfibB9s6UNQc7n7UK1C4zHiiVKuYJ3QBgc');
+  const globalState = yield select(makeSelectGlobal());
+  const { walletDetails } = cloneDeep(globalState);
+  const {
+    provider_address,
+  } = walletDetails;
+  const response = yield getUser(provider_address);
   console.log('responseeee----', response);
-  // const user_name = yield localStorage.getItem('user_name');
-  // if (user_name) {
-  //   yield put(userRegistrationSuccess({
-  //     user_name,
-  //   }));
-  // } else {
-  //   yield put(userRegistrationError());
-  // }
+  if (response) {
+    yield put(userRegistrationSuccess({
+      user_name: response,
+    }));
+  } else {
+    console.log('userRegistrationError----');
+    yield put(userRegistrationError());
+  }
 }
 
 function* userRegisterSaga(action) {
@@ -132,9 +139,11 @@ export function* userLoginSaga(action) {
 }
 
 export function* userAuthCheckSaga() {
+  console.log('inside userAuthCheckSaga');
   yield put(userAuthCheckInitiate());
   const provider_address = yield localStorage.getItem('provider_address');
   const provider_label = yield localStorage.getItem('provider_label');
+  console.log('inside userAuthCheckSaga details', provider_address);
   if (!provider_address) {
     yield put(userAuthCheckError());
   } else {
@@ -142,6 +151,15 @@ export function* userAuthCheckSaga() {
       provider_label,
       provider_address,
     }));
+    try {
+      console.log('inside userRegistrationCheckSaga try block');
+      yield call(userRegistrationCheckSaga);
+      yield put(push('/home'));
+    } catch (err) {
+      console.log('inside userRegistrationCheckSaga catch block');
+      // const errorMessage = { errorMessage: err.response.data };
+      console.log('error', err);
+    }
   }
 }
 

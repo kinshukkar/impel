@@ -39,7 +39,7 @@ const App = (props) => {
 
   useEffect(() => {
     tryAutoLogin();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isUserRegistered]);
 
   return (
     <>

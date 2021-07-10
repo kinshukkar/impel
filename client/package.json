@@ -16,7 +16,7 @@
   "author": "Pompita Sarkar <pompitasarkar26@gmail.com>",
   "dependencies": {
     "@babel/polyfill": "^7.6.0",
-    "@cityofzion/neon-js": "^4.9.0",
+    "@cityofzion/neon-js": "^5.0.0-next.13",
     "@material-ui/core": "^4.4.2",
     "@material-ui/icons": "^4.4.1",
     "axios": "^0.19.0",
@@ -29,7 +29,7 @@
     "immer": "^4.0.0",
     "labeled-checkbox-material-ui": "^2.2.0",
     "local-storage": "^2.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
