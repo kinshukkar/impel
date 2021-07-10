@@ -9,7 +9,7 @@ using Neo.SmartContract.Framework.Services;
 
 namespace Impel
 {
-    [DisplayName("Impel.ImpelSCv0.1")]
+    [DisplayName("Impel.ImpelSCv0.4")]
     [ManifestExtra("Author", "Kinshuk Kar, Pompita Sarkar")]
     [ManifestExtra("Email", "kinshuk89@gmail.com")]
     [ManifestExtra("Description", "A novel motivation mechanism to assist people in getting fitter with social and financial rewards")]
@@ -23,6 +23,18 @@ namespace Impel
 
         static UInt160 IMPEL_NFT_TOKEN_CONTRACT_HASH = ToScripthash("NM9D5C2wdjgiN6EkcWmRccMh7TX5V9zTen");        
         
+        public delegate void OnChallengeSubscribedDelegate(UInt160 user, BigInteger challengeId, BigInteger commitAmount);
+        [DisplayName("ChallengeSubscribed")]
+        public static event OnChallengeSubscribedDelegate OnChallengeSubscribed;
+
+        public delegate void OnChallengeEvaluatedDelegate(BigInteger challengeId);
+        [DisplayName("ChallengeEvaluated")]
+        public static event OnChallengeEvaluatedDelegate OnChallengeEvaluated;
+
+        public delegate void OnRewardsDistributedDelegate(BigInteger challengeId);
+        [DisplayName("RewardsSubscribed")]
+        public static event OnRewardsDistributedDelegate OnRewardsDistributed;
+
         [DisplayName("_deploy")]
         public static void deploy(object data, bool update) {
             if (!update)
@@ -35,7 +47,6 @@ namespace Impel
 
             contractDataManager.PutOwner(ToAddress((ByteString) Tx.Sender));
             contractDataManager.ResetLastChallengeId();
-            BigInteger newChallengeId = contractDataManager.GetAndIncrementLastChallengeId();
         }
 
         public static void updateContract(ByteString nefFile, string manifest) {
@@ -116,7 +127,7 @@ namespace Impel
             return retrieveUserByAddress(ToAddress((ByteString) Tx.Sender));
         }
 
-        private static User retrieveUserByAddress(string address) {
+        public static User retrieveUserByAddress(string address) {
             return contractDataManager.GetUser(address);
         }
 
@@ -132,8 +143,8 @@ namespace Impel
             return contractDataManager.GetSubscribedEntriesForChallenge(challengeId);
         }
 
-        public List<UserChallengeEntry> getSubscribedChallengesForUser() {
-            return contractDataManager.GetSubscribedChallengesForUser(ToAddress((ByteString)Tx.Sender));
+        public List<UserChallengeEntry> getSubscribedChallengesForUser(string address) {
+            return contractDataManager.GetSubscribedChallengesForUser(address);
         }
 
         public Boolean updateChallengeEntryState(BigInteger challengeId, string userKey, UserChallengeEntry.UserChallengeState state) {
@@ -155,6 +166,8 @@ namespace Impel
                 if (data.Length == 2 && (string)data[0] == "join_challenge") {
                     BigInteger challengeId = (BigInteger) data[1];
                     contractDataManager.AddUserChallengeRecord(challengeId, ToAddress((ByteString) from), amount);
+
+                    OnChallengeSubscribed(from, challengeId, amount);
                 }
             }
         }
@@ -227,6 +240,8 @@ namespace Impel
                 }
                 string entryKey = "c#" + challengeId + entry.userKey;
                 contractDataManager.PutChallengeEntry(entryKey, entry);
+
+                OnChallengeEvaluated(challengeId);
             }
         }
         
@@ -254,6 +269,8 @@ namespace Impel
                 //Assign a winner's badge to the account for completing the challenge
                 Contract.Call(IMPEL_NFT_TOKEN_CONTRACT_HASH, "MintAndTransfer", CallFlags.All, new object[]{tokenName, tokenDescription, tokenURL, winningAccount});
             }
+
+            OnRewardsDistributed(challengeId);
             
             return true;
         }
@@ -331,7 +348,7 @@ namespace Impel
 
         public void AddUserChallengeRecord(BigInteger challengeId, string userKey, BigInteger amount) {
 
-            UserChallengeEntry userChallengeRecord = new UserChallengeEntry(userKey, (int)amount);
+            UserChallengeEntry userChallengeRecord = new UserChallengeEntry(userKey, challengeId, (int)amount);
             string recordKey = "c#" + challengeId + userKey;
             PutChallengeEntry(recordKey, userChallengeRecord);
         }
@@ -398,12 +415,14 @@ namespace Impel
             DataSubmittedNotQualified
         }
         public string userKey;
+        public BigInteger challengeId;
         public int commitAmount;
 
         public UserChallengeState state;
 
-        public UserChallengeEntry(string key, int amount) {
+        public UserChallengeEntry(string key, BigInteger challenge_id, int amount) {
             userKey = key;
+            challengeId = challenge_id;
             commitAmount = amount;
             state = UserChallengeState.DataNotSubmitted;
         }
