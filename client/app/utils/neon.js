@@ -135,11 +135,15 @@ function format_datetime(s) {
 
 // console.log(await getUser("NfibB9s6UNQc7n7UK1C4zHiiVKuYJ3QBgc"));
 // console.log(await getUser("NZUPUkpWvxTacv9p7hqBtpCuxHAHfGrnyU"));
-async function getUser(address) {
+export async function getUser(address) {
+  console.log('address--', address);
+  console.log('str--', `B*${address}`);
+  console.log('hexstring--', Neon.u.str2hexstring(`B*${address}`));
   const result = await config.rpcClient.getStorage(
 			  config.impelScriptHash,
 			  Neon.u.str2hexstring(`B*${address}`),
   );
+  console.log('getUser result--', result);
 
   return JSON.parse(Neon.u.base642utf8(result))[0];
 }

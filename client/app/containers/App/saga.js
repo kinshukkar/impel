@@ -5,6 +5,7 @@ import {
 } from 'redux-saga/effects';
 import axios from 'utils/axios-base';
 import { push } from 'connected-react-router';
+import { getUser } from 'utils/neon';
 import {
   USER_LOGIN,
   USER_LOGOUT,
@@ -39,17 +40,19 @@ function* userLogoutSaga() {
   window.location.reload();
 }
 
-
+// check if user registered and associated with this wallet
 function* userRegistrationCheckSaga() {
   console.log('inside userRegistrationCheckSaga');
-  const user_name = yield localStorage.getItem('user_name');
-  if (user_name) {
-    yield put(userRegistrationSuccess({
-      user_name,
-    }));
-  } else {
-    yield put(userRegistrationError());
-  }
+  const response = yield getUser('NfibB9s6UNQc7n7UK1C4zHiiVKuYJ3QBgc');
+  console.log('responseeee----', response);
+  // const user_name = yield localStorage.getItem('user_name');
+  // if (user_name) {
+  //   yield put(userRegistrationSuccess({
+  //     user_name,
+  //   }));
+  // } else {
+  //   yield put(userRegistrationError());
+  // }
 }
 
 function* userRegisterSaga(action) {
