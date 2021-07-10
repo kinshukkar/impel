@@ -76,6 +76,7 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
       draft.isRegistrationInProgress = false;
       draft.isUserRegistered = false;
       break;
+
     case USER_LOGIN_ERROR:
     case USER_AUTH_CHECK_ERROR:
       draft.isLoginFetching = false;

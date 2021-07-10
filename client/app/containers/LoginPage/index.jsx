@@ -20,6 +20,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { userLogin } from 'containers/App/actions';
 import appLogo from 'assets/impel.svg';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { getUser } from '../../utils/neon';
 
 const useStyles = makeStyles((theme) => ({
   '@global': {

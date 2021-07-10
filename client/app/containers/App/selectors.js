@@ -28,9 +28,16 @@ const makeSelectIsUserRegistered = () => (
   )
 );
 
+const makeSelectGlobal = () => (
+  createSelector(
+    selectGlobal,
+    (globalState) => globalState,
+  )
+);
+
 export {
-  selectGlobal,
   makeSelectIsAuthenticated,
   makeSelectIsLoginFetching,
   makeSelectIsUserRegistered,
+  makeSelectGlobal,
 };
