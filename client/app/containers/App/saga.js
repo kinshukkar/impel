@@ -10,6 +10,7 @@ import {
   USER_LOGOUT,
   USER_AUTH_CHECK,
   USER_REGISTRATION_CHECK,
+  USER_REGISTER,
 } from './constants';
 import {
   userLoginInitiate,
@@ -24,10 +25,11 @@ import {
   userRegistrationInitiate,
   userRegistrationSuccess,
   userRegistrationError,
+  userRegistrationCheck,
   // userAuthClear,
 } from './actions';
 
-export function* userLogoutSaga() {
+function* userLogoutSaga() {
   yield call([localStorage, 'removeItem'], 'provider_address');
   yield call([localStorage, 'removeItem'], 'provider_label');
   yield call([localStorage, 'removeItem'], 'persist:root');
@@ -36,6 +38,31 @@ export function* userLogoutSaga() {
   // hack
   window.location.reload();
 }
+
+
+function* userRegistrationCheckSaga() {
+  console.log('inside userRegistrationCheckSaga');
+  const user_name = yield localStorage.getItem('user_name');
+  if (user_name) {
+    yield put(userRegistrationSuccess({
+      user_name,
+    }));
+  } else {
+    yield put(userRegistrationError());
+  }
+}
+
+function* userRegisterSaga(action) {
+  const { user_name } = action.payload;
+  yield localStorage.setItem(
+    'user_name',
+    user_name,
+  );
+  yield put(userRegistrationSuccess({
+    user_name,
+  }));
+}
+
 
 function* sendLoginRequest(neoN3Data, pushRoute) {
   let provider_address; let
@@ -70,16 +97,19 @@ function* sendLoginRequest(neoN3Data, pushRoute) {
 
   if (provider_address) {
     yield put(userAuthCheckSuccess({
-      // id: '1',
       provider_label,
       provider_address,
     }));
   } else {
     yield put(userAuthCheckError());
   }
-  yield put(userRegistrationSuccess());
-  // yield put(userRegistrationError());
-  yield put(pushRoute());
+  try {
+    yield call(userRegistrationCheckSaga);
+    yield put(pushRoute());
+  } catch (err) {
+    // const errorMessage = { errorMessage: err.response.data };
+    console.log('error', err);
+  }
 }
 
 
@@ -90,40 +120,7 @@ export function* userLoginSaga(action) {
     console.log('inside saga--', neoN3Data);
     if (Object.keys(neoN3Data).length > 0) {
       yield call(sendLoginRequest, neoN3Data, pushRoute);
-      // console.log('response--', response);
-      // if (response.status === 200) {
-      //   console.log('yayy', response);
-      //   // yield put(pushRoute());
-      // }
     }
-    // const response = yield axios.post('/login', {
-    //   email: username,
-    //   password,
-    // }, config);
-    // if (response.status === 200) {
-    //   yield localStorage.setItem(
-    //     'session_token',
-    //     `demo-${response.data.id}`,
-    //   );
-    //   yield localStorage.setItem(
-    //     'user_email',
-    //     username,
-    //   );
-    //   yield localStorage.setItem(
-    //     'provider_name',
-    //     `${response.data.name}`,
-    //   );
-    //   yield localStorage.setItem(
-    //     'provider_id',
-    //     `${response.data.id}`,
-    //   );
-    //   yield put(userLoginSuccess({
-    //     id: 1,
-    //     email: username,
-    //     sessionToken: `demo-${response.data.id}`,
-    //   }));
-    // }
-    // yield put(pushRoute());
   } catch (err) {
     // const errorMessage = { errorMessage: err.response.data };
     console.log('error', err);
@@ -145,14 +142,10 @@ export function* userAuthCheckSaga() {
   }
 }
 
-export function* userRegistrationCheckSaga() {
-  yield put(userRegistrationSuccess());
-  // yield put(userRegistrationError());
-}
-
 export default function* userAuth() {
   yield takeLatest(USER_LOGIN, userLoginSaga);
   yield takeLatest(USER_LOGOUT, userLogoutSaga);
   yield takeLatest(USER_AUTH_CHECK, userAuthCheckSaga);
-  yield takeLatest(USER_REGISTRATION_CHECK, userRegistrationCheckSaga);
+  // yield takeLatest(USER_REGISTRATION_CHECK, userRegistrationCheckSaga);
+  yield takeLatest(USER_REGISTER, userRegisterSaga);
 }

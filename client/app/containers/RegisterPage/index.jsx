@@ -16,7 +16,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import appLogo from 'assets/impel.svg';
 import axios from 'utils/axios-base';
 import { useDispatch } from 'react-redux';
-import { userRegistrationCheck } from '../App/actions';
+import { userRegister } from '../App/actions';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -74,7 +74,10 @@ const RegisterPage = (props) => {
   };
 
   const handleRegister = () => {
-    dispatch(userRegistrationCheck());
+    const payload = {
+      user_name: name,
+    };
+    dispatch(userRegister(payload));
     pushToHomeRoute();
   };
 

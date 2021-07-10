@@ -7,7 +7,7 @@ import {
   withRouter,
 } from 'react-router-dom';
 import { compose } from 'redux';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import clsx from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
@@ -22,7 +22,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import InputIcon from '@material-ui/icons/Input';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-
+import appLogo from 'assets/impel.svg';
 import { userLogout } from 'containers/App/actions';
 import SideNavBar from './SideNavBar';
 import mainRoutes from './routes';
@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   toolbarIcon: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     padding: '0 8px',
     ...theme.mixins.toolbar,
   },
@@ -111,9 +111,17 @@ const useStyles = makeStyles((theme) => ({
 
 const MainLayout = (props) => {
   const classes = useStyles();
+  const {
+    walletDetails,
+    userDetails,
+  } = useSelector(
+    (state) => state.global,
+  );
   const { onUserLogout } = props;
 
   const [open, setOpen] = useState(false);
+
+  const { user_name } = userDetails;
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -142,7 +150,10 @@ const MainLayout = (props) => {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Impel
+            {`Welcome ${user_name}`}
+          </Typography>
+          <Typography component="h4" variant="h6" color="inherit" noWrap style={{ fontSize: 14 }}>
+            Experience Fitmess Excellence and Claim Rewards now
           </Typography>
           {getProviderName()}
           <IconButton color="inherit" title="Logout" onClick={() => onUserLogout()}>
@@ -158,7 +169,11 @@ const MainLayout = (props) => {
         open={open}
       >
         <div className={classes.toolbarIcon}>
-          <IconButton onClick={handleDrawerClose}>
+          <img src={appLogo} alt="Impel Logo" width="60" className={classes.appLogo} />
+          <Typography component="h1" variant="h5">
+            Impel
+          </Typography>
+          <IconButton onClick={handleDrawerClose} style={{ marginLeft: 'auto' }}>
             <ChevronLeftIcon />
           </IconButton>
         </div>

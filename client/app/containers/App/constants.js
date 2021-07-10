@@ -29,4 +29,6 @@ export const USER_REGISTRATION_INITIATE = 'impel-app/App/USER_REGISTRATION_INITI
 export const USER_REGISTRATION_SUCCESS = 'impel-app/App/USER_REGISTRATION_SUCCESS';
 export const USER_REGISTRATION_ERROR = 'impel-app/App/USER_REGISTRATION_ERROR';
 
+export const USER_REGISTER = 'impel-app/App/USER_REGISTER';
+
 export const USER_AUTH_CLEAR = 'impel-app/App/USER_AUTH_CLEAR';

@@ -33,7 +33,8 @@ export const initialState = {
   isRegistrationInProgress: true,
   isAuthenticated: false,
   isUserRegistered: false,
-  userDetails: {}, // email, session_token
+  walletDetails: {}, // NEO wallet details to be stored here
+  userDetails: {}, // Registered user details to be stored here
   isLoginError: false,
   isRegistrationError: false,
   userLoginError: {}, // type, msg
@@ -55,7 +56,7 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
     case USER_AUTH_CHECK_SUCCESS:
       draft.isLoginFetching = false;
       draft.isAuthenticated = true;
-      draft.userDetails = {
+      draft.walletDetails = {
         // id: action.payload.id,
         provider_label: action.payload.provider_label,
         provider_address: action.payload.provider_address,
@@ -65,11 +66,15 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
     case USER_REGISTRATION_SUCCESS:
       draft.isRegistrationInProgress = false;
       draft.isUserRegistered = true;
+      draft.userDetails = {
+        user_name: action.payload.user_name,
+      };
       break;
 
     case USER_REGISTRATION_ERROR:
       draft.isRegistrationError = true;
       draft.isRegistrationInProgress = false;
+      draft.isUserRegistered = false;
       break;
     case USER_LOGIN_ERROR:
     case USER_AUTH_CHECK_ERROR:
@@ -80,7 +85,7 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
 
     case USER_LOGOUT_SUCCESS:
       draft.isAuthenticated = false;
-      draft.userDetails = {};
+      draft.walletDetails = {};
       break;
   }
 });

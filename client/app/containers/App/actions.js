@@ -36,6 +36,7 @@ import {
   USER_REGISTRATION_INITIATE,
   USER_REGISTRATION_SUCCESS,
   USER_REGISTRATION_ERROR,
+  USER_REGISTER,
 } from './constants';
 
 export const userLogin = (payload) => {
@@ -134,9 +135,10 @@ export const userRegistrationInitiate = () => {
   };
 };
 
-export const userRegistrationSuccess = () => {
+export const userRegistrationSuccess = (payload) => {
   return {
     type: USER_REGISTRATION_SUCCESS,
+    payload,
   };
 };
 
@@ -144,5 +146,12 @@ export const userRegistrationError = (error) => {
   return {
     type: USER_REGISTRATION_ERROR,
     error,
+  };
+};
+
+export const userRegister = (payload) => {
+  return {
+    type: USER_REGISTER,
+    payload,
   };
 };
