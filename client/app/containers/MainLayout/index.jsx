@@ -17,11 +17,10 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
+import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import InputIcon from '@material-ui/icons/Input';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import appLogo from 'assets/impel.svg';
 import { userLogout } from 'containers/App/actions';
 import SideNavBar from './SideNavBar';
@@ -144,13 +143,15 @@ const MainLayout = (props) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography component="h1" variant="h6" color="inherit" noWrap>
-            Welcome to Impel
-          </Typography>
-          <Typography component="h4" variant="h6" color="inherit" noWrap className={classes.title} style={{ fontSize: 14, marginLeft: 20 }}>
-            Experience Fitmess Excellence and Claim Rewards now
-          </Typography>
-          <Typography component="h1" variant="h6" color="inherit" noWrap>
+          <div>
+            <Typography component="h1" variant="h6" color="inherit" noWrap>
+              Welcome to Impel
+            </Typography>
+            <Typography component="h4" variant="h6" noWrap className={classes.title} style={{ fontSize: 13 }}>
+              Experience Fitmess Excellence and Claim Rewards now
+            </Typography>
+          </div>
+          <Typography component="h1" variant="h6" color="inherit" noWrap style={{ marginLeft: 'auto' }}>
             {user_name}
           </Typography>
           <IconButton color="inherit" title="Logout" onClick={() => onUserLogout()}>

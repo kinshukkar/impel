@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import { compose } from 'redux';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { green } from '@material-ui/core/colors';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Grid from '@material-ui/core/Grid';
@@ -15,6 +16,8 @@ import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ImpelCard from 'components/ImpelCard';
 import ErrorIcon from '@material-ui/icons/Error';
+import Fab from '@material-ui/core/Fab';
+import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 import Avatar1 from 'assets/images/avatars/Badge.png';
 import Avatar2 from 'assets/images/avatars/avatar2.jpg';
 import { getAllActiveChallenges, getUserJoinedChallenges, joinChallenge } from './actions';
@@ -67,6 +70,16 @@ const useStyles = makeStyles((theme) => ({
   headerFont: {
     fontSize: 24,
     margin: theme.spacing(3, 0, 3),
+  },
+  fab: {
+    position: 'absolute',
+    bottom: theme.spacing(6),
+    right: theme.spacing(2),
+    color: theme.palette.common.white,
+    // backgroundColor: green[500],
+    // '&:hover': {
+    //   backgroundColor: green[600],
+    // },
   },
 }));
 
@@ -245,6 +258,16 @@ const HomePage = (props) => {
           <AchievementBadge avatarSrc={Avatar2} title="20k Marathon" />
           <AchievementBadge avatarSrc={Avatar1} title="5k Marathon" />
         </TabPanel>
+        <Fab
+          variant="extended"
+          href="http://localhost:9000/auth/strava"
+          aria-label="Connect to Strava"
+          className={classes.fab}
+          color="secondary"
+        >
+          <DirectionsRunIcon />
+          Connect to Strava
+        </Fab>
       </>
       <JoinChallengeDialog
         classes={{
