@@ -23,6 +23,17 @@ body {
   .MuiTabs-root {
     padding-bottom: 12;
   }
+
+  .MuiTooltip {
+    &-tooltip {
+      font-size: 1rem;
+      background-color: rgb(85, 85, 85);
+    }
+
+    &-arrow {
+      color: rgb(85, 85, 85);
+    }
+  }
 }
 
 .zt-dialogue-queue {

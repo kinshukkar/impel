@@ -43,7 +43,7 @@ const JoinChallengeDialog = (props) => {
       <DialogTitle id="confirmation-dialog-title">Join Challenge</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          To join this challenge, please commit some GAS amount. If you win the challenge, you would receive
+          To join this challenge, please commit some GAS amount. If you win the challenge, you will receive
           20% more than the amount you commit.
         </DialogContentText>
         <TextField
@@ -61,7 +61,7 @@ const JoinChallengeDialog = (props) => {
         <Button autoFocus onClick={handleCancel} color="primary">
           Cancel
         </Button>
-        <Button onClick={handleOk} color="primary">
+        <Button onClick={handleOk} color="primary" disabled={value === 0}>
           Join
         </Button>
       </DialogActions>
