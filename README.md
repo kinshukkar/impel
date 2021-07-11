@@ -40,5 +40,17 @@ Key concepts and flows around the Impel solution -
 ![Impel Architecture](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/arch.png?token=AAKE3XHAU4GMKTZHC3NVUY3A5M7TK "Architecture")
 
 
+## Roadmap
+
+- Introduce more type of challenges and variable rewards
+- Include more types of activities for the challenges
+- Improve the economic governance model and make it completely on-chain to determine the best payouts/ rewards to end-users while keeping in mind the incentives for  the dapp
+- Integrate with solutions other than Strava to improve reach
+- Introduce challenges in the setting of closed user groups instead of just global chalenges
+- Make improvements in the NFT model to incorporate levels and growth with consistency 
+- Introduce notifications to prod users to complete challenges
+- Potential to evolve beyond just the fitness and health domain to other similar setups - Like motivation for tasks/micro-tasks, learning languages, reading books, etc.
+- Could evolve to become an ecosystem where traditional apps can connect with the system and setup incentivized challenges on top of their systems to drive engagement
+
 ## License
 Apache License, Version 2.0
