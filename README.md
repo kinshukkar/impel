@@ -21,6 +21,16 @@ Key concepts and flows around the Impel solution -
 
 ## Team 
 - Kinshuk Kar [Twitter](https://twitter.com/kinshukkar)
+
+## Pitch
+
+- Impel is a novel solution that combines all the powerful features of the N3 platform to provide a comprehensive, real-world solution for the end-users.
+- Seeks to promote the usage of GAS as a currency.
+- Utilizes NFT Tokens to incentivize winners of the challenge to promote a sense of accomplishment along with the financial incentives provided.
+- Utilizes Oracles to retrieve interface with the APIs but keeps the core execution and evaluation pieces within the Smart Contract on the blockchain.
+- Integrated frontend interface implemented for the dapp powered by Neoline wallet for user actions and Neon JS for system activities over the smart contract.
+- External system integration [Strava] as a source of truth to reduce/eliminate spurious usage of the app. Implemented as part of the Planation Submission Feedback
+- Sustainable and engaging economic model built-in to the system that can be extended to offer variations as well in the future. Again, this was refined as a result of the Planation Submission Feedback
 - Pompita Sarkar [Twitter](https://twitter.com/sooperminion)
 
 ## License
