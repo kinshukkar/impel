@@ -1,4 +1,4 @@
-![Impel](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/impel.png?token=AAKE3XAXY7ARXCOZCNV3SBLA5M7HM "Impel")
+![Impel](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/impel.png "Impel")
 
 # Impel
 
@@ -21,6 +21,10 @@ Key concepts and flows around the Impel solution -
 - Once the determination of the challenge winners is determined by the system, payouts will be made to the winning users by the Smart Contract. The payout would be 20% more than the committed amount for the user. 
 - Along with the bonus payout for the winners, a NFT Token would also be generated and associated with the user's account. This would serve as badges for winning the various challenges and would be displayed on the system. The Impel Token as it is termed will follow the NEP-11 NFT interface
 
+### Challenge Lifecycle
+
+![Challenge Lifecycle](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/challenge_lifecycle.png "Challenge Lifecycle")
+
 ## Team 
 - Kinshuk Kar [Twitter](https://twitter.com/kinshukkar)
 - Pompita Sarkar [Twitter](https://twitter.com/sooperminion)
@@ -35,10 +39,44 @@ Key concepts and flows around the Impel solution -
 - External system integration [Strava] as a source of truth to reduce/eliminate spurious usage of the app. Implemented as part of the Planation Submission Feedback
 - Sustainable and engaging economic model built-in to the system that can be extended to offer variations as well in the future. Again, this was refined as a result of the Planation Submission Feedback
 
+## Economic Model
+
+The economic model behind the solution is presented below - 
+
+We will try to derive a simplistic unit-based economic scenario to determine the feasibility of the solution - 
+
+Setup: 100 units are contributed towards a particular challenge
+Assumption: Amount committed is proportional to the number of users in a challenge, i.e there is a consistent average amount that is committed per user. 
+
+Users won: **60% [60 units]**
+Users lost: **35% [35 units]** - Amount forfeited by the system
+Users not submitted: **5% [5 units]** - Amount forfeited by the system
+
+Payout based on 60% winners including bonus - **60*1.2 = 72 units**
+Average costs of running the system [Blockchain interactions, Server/System maintenance] - **20% or 20 units**
+Profit margin **[100 - (72 - 20)] = ~8%**
+
+Thus, the system would sustainable from a financial perspective. 
+
+As mentioned in the roadmap, the model would be further enhanced to incorporate these factors to determine the most optimum payouts and system based on %age or winners, challenge commit amounts, running costs, etc.
+
 ## Architecture
 
-![Impel Architecture](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/arch.png?token=AAKE3XHAU4GMKTZHC3NVUY3A5M7TK "Architecture")
+![Impel Architecture](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/arch.png "Architecture")
 
+
+
+## Roadmap
+
+- Introduce more type of challenges and variable rewards
+- Include more types of activities for the challenges
+- Improve the economic governance model and make it completely on-chain to determine the best payouts/ rewards to end-users while keeping in mind the incentives for  the dapp
+- Integrate with solutions other than Strava to improve reach
+- Introduce challenges in the setting of closed user groups instead of just global chalenges
+- Make improvements in the NFT model to incorporate levels and growth with consistency 
+- Introduce notifications to prod users to complete challenges
+- Potential to evolve beyond just the fitness and health domain to other similar setups - Like motivation for tasks/micro-tasks, learning languages, reading books, etc.
+- Could evolve to become an ecosystem where traditional apps can connect with the system and setup incentivized challenges on top of their systems to drive engagement
 
 ## License
 Apache License, Version 2.0
