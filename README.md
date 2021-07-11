@@ -54,11 +54,12 @@ Users not submitted: **5% [5 units]** - Amount forfeited by the system
 
 Payout based on 60% winners including bonus - **60*1.2 = 72 units**
 Average costs of running the system [Blockchain interactions, Server/System maintenance] - **20% or 20 units**
+
 Profit margin **[100 - (72 - 20)] = ~8%**
 
 Thus, the system would sustainable from a financial perspective. 
 
-As mentioned in the roadmap, the model would be further enhanced to incorporate these factors to determine the most optimum payouts and system based on %age or winners, challenge commit amounts, running costs, etc.
+As mentioned in the roadmap, the model would be further enhanced to incorporate these factors to determine the most optimum payouts and system based on %age of winners, challenge commit amounts, running costs, etc.
 
 ## Architecture
 
