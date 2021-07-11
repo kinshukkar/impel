@@ -37,7 +37,7 @@ Key concepts and flows around the Impel solution -
 
 ## Architecture
 
-![Impel Architecture](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/arch.png?token=AAKE3XEBNQEJPTAXYMBC6DTA5M6VY "Architecture")
+![Impel Architecture](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/arch.png?token=AAKE3XHAU4GMKTZHC3NVUY3A5M7TK "Architecture")
 
 
 ## License
