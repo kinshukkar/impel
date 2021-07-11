@@ -66,6 +66,7 @@ const ImpelCard = (props) => {
   const {
     data,
     joined,
+    hasUserJoined,
     handleJoinChallenge,
   } = props;
 
@@ -153,7 +154,7 @@ const ImpelCard = (props) => {
         <Button
           variant="contained"
           // disable Submit button if current date before evaluation date
-          disabled={joined && (new Date() < new Date(data.evaluationTime))}
+          disabled={(joined && (new Date() < new Date(data.evaluationTime))) || hasUserJoined}
           color="primary"
           style={{ marginLeft: 'auto' }}
           onClick={() => handleJoinChallenge(Number(data.id))}
@@ -168,10 +169,12 @@ const ImpelCard = (props) => {
 ImpelCard.defaultProps = {
   data: {},
   joined: false,
+  hasUserJoined: false,
 };
 
 ImpelCard.propTypes = {
   data: PropTypes.object,
+  hasUserJoined: PropTypes.bool,
   joined: PropTypes.bool,
   handleJoinChallenge: PropTypes.func.isRequired,
 };
