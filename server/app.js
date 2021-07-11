@@ -80,11 +80,11 @@ app.get('/auth/strava',
   passport.authenticate('strava'));
 
 app.get('/auth/strava/callback', 
-  passport.authenticate('strava', { failureRedirect: 'http://127.0.0.1:3000' }),
+  passport.authenticate('strava', { failureRedirect: 'http://127.0.0.1:5600/auth/notfound' }),
   function(req, res) {
     // Successful authentication, redirect home.
     console.log("TRYING TO REDIRECT")
-    res.redirect('http://127.0.0.1:3000/strava');
+    res.redirect('http://127.0.0.1:5600/strava');
 });
 
 // catch 404 and forward to error handler
