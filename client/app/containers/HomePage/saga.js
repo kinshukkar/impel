@@ -95,7 +95,7 @@ function* joinChallengeSaga(action) {
   const {
     provider_address,
   } = walletDetails;
-  yield neoN3Data.invoke({
+  const invokeFn = yield neoN3Data.invoke({
     scriptHash: 'd2a4cff31913016155e38e474a2c06d08be276cf',
     operation: 'transfer',
     args: [
@@ -133,28 +133,33 @@ function* joinChallengeSaga(action) {
         scopes: 128,
       },
     ],
-  })
-    .then((result) => {
-      console.log('Invoke transaction success!');
-      console.log(`Transaction ID: ${result.txid}`);
-      console.log(`RPC node URL: ${result.nodeURL}`);
-    })
-    .catch(({ type, description, data }) => {
-      switch (type) {
-        case 'NO_PROVIDER':
-          console.log('No provider available.');
-          break;
-        case 'RPC_ERROR':
-          console.log('There was an error when broadcasting this transaction to the network.');
-          break;
-        case 'CANCELED':
-          console.log('The user has canceled this transaction.');
-          break;
-        default:
-          console.log('Nothing.');
-      }
-    });
-  yield call(addChallengeToJoinedChallenges, challengeId);
+  });
+  console.log('result--', invokeFn);
+  if (invokeFn.txid) {
+    yield addChallengeToJoinedChallenges(challengeId);
+  }
+  // .then((result) => {
+  //   console.log('Invoke transaction success!');
+  //   console.log(`Transaction ID: ${result.txid}`);
+  //   console.log(`RPC node URL: ${result.nodeURL}`);
+  //   // addChallengeToJoinedChallenges(challengeId).next();
+  // })
+  // .catch(({ type, description, data }) => {
+  //   addChallengeToJoinedChallenges('1').next();
+  //   switch (type) {
+  //     case 'NO_PROVIDER':
+  //       console.log('No provider available.');
+  //       break;
+  //     case 'RPC_ERROR':
+  //       console.log('There was an error when broadcasting this transaction to the network.');
+  //       break;
+  //     case 'CANCELED':
+  //       console.log('The user has canceled this transaction.');
+  //       break;
+  //     default:
+  //       console.log('Nothing.');
+  //   }
+  // });
 }
 
 export default function* home() {

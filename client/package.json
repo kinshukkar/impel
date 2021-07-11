@@ -11,7 +11,8 @@
     "lint:eslint:fix": "eslint app/**/*.js app/**/*.jsx --fix",
     "lint:js": "npm run lint:eslint",
     "lint:staged": "lint-staged",
-    "prepush": "cross-env npm run lint"
+    "prepush": "cross-env npm run lint",
+    "deploy": "serve -s build"
   },
   "author": "Pompita Sarkar <pompitasarkar26@gmail.com>",
   "dependencies": {

@@ -15,7 +15,7 @@ import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ImpelCard from 'components/ImpelCard';
 import ErrorIcon from '@material-ui/icons/Error';
-import Avatar1 from 'assets/images/avatars/avatar1.jpg';
+import Avatar1 from 'assets/images/avatars/Badge.png';
 import Avatar2 from 'assets/images/avatars/avatar2.jpg';
 import { getAllActiveChallenges, getUserJoinedChallenges, joinChallenge } from './actions';
 import JoinChallengeDialog from './JoinChallengeDialog';
@@ -204,6 +204,8 @@ const HomePage = (props) => {
               return (
                 <Grid key={item.id} item xs={3}>
                   <ImpelCard
+                    hasUserJoined={userJoinedChallenges
+                      .findIndex((userJoinedChallenge) => userJoinedChallenge.challengeId === Number(item.id)) > -1}
                     data={item}
                     handleJoinChallenge={() => handleClickOpenJoinChallengeDialog(item.id)}
                   />

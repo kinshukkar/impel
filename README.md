@@ -1,3 +1,5 @@
+![Impel](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/impel.png?token=AAKE3XAXY7ARXCOZCNV3SBLA5M7HM "Impel")
+
 # Impel
 
 Impel is an innovative solution uniquely designed to help motivate people and communities to become fitter by providing an incentivized approach both from a financial as well as social rewards.
@@ -35,7 +37,7 @@ Key concepts and flows around the Impel solution -
 
 ## Architecture
 
-![Impel Architecture](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/arch.png?token=AAKE3XEBNQEJPTAXYMBC6DTA5M6VY "Architecture")
+![Impel Architecture](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/arch.png?token=AAKE3XHAU4GMKTZHC3NVUY3A5M7TK "Architecture")
 
 
 ## License
