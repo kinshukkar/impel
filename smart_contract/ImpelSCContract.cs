@@ -9,20 +9,20 @@ using Neo.SmartContract.Framework.Services;
 
 namespace Impel
 {
-    [DisplayName("Impel.ImpelSCv0.6")]
+    [DisplayName("Impel.ImpelSCv0.9")]
     [ManifestExtra("Author", "Kinshuk Kar, Pompita Sarkar")]
     [ManifestExtra("Email", "kinshuk89@gmail.com")]
     [ManifestExtra("Description", "A novel motivation mechanism to assist people in getting fitter with social and financial rewards")]
     [ContractPermission("*", "onNEP17Payment")]
-    [ContractPermission("0x95bc4c2d84c0b5b0a028e83a5e70f198815a488e", "*")]
-    [ContractTrust("0x95bc4c2d84c0b5b0a028e83a5e70f198815a488e")]
+    [ContractPermission("0xdfa3dca56168dd9a9ed96e247def777af4166de2", "*")]
+    [ContractTrust("0xdfa3dca56168dd9a9ed96e247def777af4166de2")]
     [ContractTrust("0xd2a4cff31913016155e38e474a2c06d08be276cf")]
     public class ImpelSCContract : SmartContract
     {
         static readonly ImpelStorage contractDataManager = new ImpelStorage();
         private static Transaction Tx => (Transaction) Runtime.ScriptContainer;
 
-        static UInt160 IMPEL_NFT_TOKEN_CONTRACT_HASH = ToScripthash("NM9D5C2wdjgiN6EkcWmRccMh7TX5V9zTen");        
+        static UInt160 IMPEL_NFT_TOKEN_CONTRACT_HASH = ToScripthash("NgZCanvgC76FaqASEpJTStCpXzr98mW5WA");        
         
         public delegate void OnChallengeSubscribedDelegate(UInt160 user, BigInteger challengeId, BigInteger commitAmount);
         [DisplayName("ChallengeSubscribed")]
@@ -177,14 +177,6 @@ namespace Impel
             }
         }
 
-        // public static void ValidateChallengeEntries(BigInteger challengeId, long gasPrice) {
-            
-        //     string url = "https://raw.githubusercontent.com/kinshukkar/i-data/main/test.json";
-        //     string filter = "$.activity_records";
-        //     string callback = "fcecallback";
-        //     FetchUserChallengeEntries(challengeId, url, filter, callback, gasPrice);
-
-        // }
         public static void fetchChallengeEntries(BigInteger challengeId, string url, string filter, string callback, long gasPrice)
         {
             Oracle.Request(url, filter, callback, (ByteString)challengeId, gasPrice);
@@ -204,13 +196,9 @@ namespace Impel
             if (!ToAddress((ByteString)Tx.Sender).Equals(contractDataManager.GetOwner())) { throw new Exception("Only the contract owner can do this"); }
 
             string result = contractDataManager.GetOracleResp(challengeId, "");
-            contractDataManager.PutOracleResp(challengeId, "C", result);
-
             Map<ByteString, List<BigInteger>> activityRecords = (Map<ByteString, List<BigInteger>>) StdLib.JsonDeserialize(result);
 
             Challenge challenge = contractDataManager.GetChallenge(challengeId);
-            contractDataManager.PutOracleResp(challengeId, "D", StdLib.Serialize(challenge) );
-
             List<UserChallengeEntry> entries = contractDataManager.GetSubscribedEntriesForChallenge(challengeId);
 
             foreach (var entry in entries)
@@ -220,7 +208,6 @@ namespace Impel
                 }
 
                 List<BigInteger> records = activityRecords[entry.userKey];
-                contractDataManager.PutOracleResp(challengeId, "E", records.ToString());
                 BigInteger qualified = 0;
                 BigInteger aggregate = 0;
 

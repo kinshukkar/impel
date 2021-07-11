@@ -8,7 +8,7 @@ using Neo.SmartContract.Framework.Services;
 
 namespace Impel
 {
-    [DisplayName("Impel.ImpelToken")]
+    [DisplayName("Impel.ImpelTokenv1.0")]
     [SupportedStandards("NEP-11")]
     [ContractPermission("*", "onNEP11Payment")]
     public class ImpelToken : SmartContract
@@ -152,7 +152,7 @@ namespace Impel
         {
             UInt256 tokenId = Mint(name, description, image);
 
-            return Transfer(to, tokenId, "");
+            return Transfer(to, tokenId, null);
         }
 
         public bool Withdraw(UInt160 to)

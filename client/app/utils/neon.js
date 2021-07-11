@@ -8,10 +8,10 @@ console.log('Neon---', Neon);
 
 export const config = {
   networkMagic: 844378958,
-  impelScriptHash: '71bcee095263b1dbb7270cf510a35525d58826f4',
-  impelTokenScriptHash: '13b56017d9f177c2020821afad231d211b20790d',
+  impelScriptHash: 'a23aabd7079c16c1fe64ab4e8223b65ddeac5450',
+  impelTokenScriptHash: 'dfa3dca56168dd9a9ed96e247def777af4166de2',
   rpcAddress: 'http://seed2t.neo.org:20332',
-  walletWif: 'KxxedRx1rJ9dZ4ptfXgYVSsLjkPud3ZxgZzdkbN1JGVk6MdbM7F8',
+  walletWif: 'KxxedRx1rJ9dZ4ptsfXgYVSsLjkPud3ZxgZzdkbN1JGVk6MdbM7F8',
   account: new wallet.Account('KxxedRx1rJ9dZ4ptfXgYVSsLjkPud3ZxgZzdkbN1JGVk6MdbM7F8'),
   rpcClient: new rpc.RPCClient('http://seed2t.neo.org:20332'),
 };

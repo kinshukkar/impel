@@ -105,11 +105,11 @@ function* joinChallengeSaga(action) {
       },
       {
         type: 'Address',
-        value: 'NiAvDzBdLUufsWfCHeo51SW6tVSzNyQYmw',
+        value: 'NTEigSf1LTNqMvujAuVgJg9Po3dGzdfB2b',
       },
       {
         type: 'Integer',
-        value: gasAmount * (10 ** 8), // multiply GAS amount by 10^8
+        value: gasAmount,
       },
       {
         type: 'Array',
