@@ -73,7 +73,7 @@ function* getUserJoinedChallengesSaga(action) {
 function* addChallengeToJoinedChallenges(challengeId) {
   const homeState = yield select(makeSelectHome());
   const { activeChallenges, userJoinedChallenges } = cloneDeep(homeState);
-  const addedChallenge = activeChallenges.filter((challenge) => Number(challenge.id) === challengeId);
+  const addedChallenge = activeChallenges.find((challenge) => Number(challenge.id) === challengeId);
   userJoinedChallenges.unshift(addedChallenge);
   yield put(updateHomeReducer({
     joinChallengeStatus: 'success',
@@ -113,7 +113,16 @@ function* joinChallengeSaga(action) {
       },
       {
         type: 'Array',
-        value: ['join_challenge', challengeId],
+        value: [
+          {
+            type: 'String',
+            value: 'join_challenge',
+          },
+          {
+            type: 'Integer',
+            value: challengeId,
+          },
+        ],
       },
     ],
     fee: '0.0001',

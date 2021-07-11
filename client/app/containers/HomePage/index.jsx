@@ -15,15 +15,11 @@ import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ImpelCard from 'components/ImpelCard';
 import ErrorIcon from '@material-ui/icons/Error';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import Avatar1 from 'assets/images/avatars/avatar1.jpg';
+import Avatar2 from 'assets/images/avatars/avatar2.jpg';
 import { getAllActiveChallenges, getUserJoinedChallenges, joinChallenge } from './actions';
 import JoinChallengeDialog from './JoinChallengeDialog';
+import AchievementBadge from '../../components/AchievementBadge';
 
 function TabPanel(props) {
   const {
@@ -100,8 +96,9 @@ const HomePage = (props) => {
   const [value, setValue] = React.useState(0);
   const [neoN3Data, setNeoN3Data] = React.useState({});
   const [openJoinChallengeDialog, setOpenJoinChallengeDialog] = React.useState(false);
-  const [gasToJoinChallenge, setGasToJoinChallenge] = React.useState('');
+  const [gasToJoinChallenge, setGasToJoinChallenge] = React.useState(0);
   const [challengeId, setChallengeId] = React.useState('');
+  const badges = 3;
 
   const setN3Data = (data) => {
     setNeoN3Data(data);
@@ -109,6 +106,20 @@ const HomePage = (props) => {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    if (Object.keys(neoN3Data).length > 0) {
+      // eslint-disable-next-line no-undef
+      const n3 = new NEOLineN3.Init();
+      console.log('inside homepage', n3);
+      setN3Data(n3);
+    } else {
+      // for cases when page is reloaded and NeoLineN3 is no more in scope
+      window.addEventListener('NEOLine.N3.EVENT.READY', () => {
+        // eslint-disable-next-line no-undef
+        const n3 = new NEOLineN3.Init();
+        console.log('inside login', n3);
+        setN3Data(n3);
+      });
+    }
     if (newValue === 1) {
       const payload = { provider_address };
       dispatch(getUserJoinedChallenges(payload));
@@ -184,7 +195,7 @@ const HomePage = (props) => {
         >
           <Tab label={`Active Challenges (${activeChallenges.length})`} />
           <Tab label={`Joined Challenges (${userJoinedChallenges.length})`} />
-          <Tab label="Badges" />
+          <Tab label={`Your Badges (${badges})`} />
         </Tabs>
         <TabPanel value={value} index={0}>
           <Grid container className="cards">
@@ -228,7 +239,9 @@ const HomePage = (props) => {
           </Grid>
         </TabPanel>
         <TabPanel value={value} index={2}>
-          Item Three
+          <AchievementBadge avatarSrc={Avatar1} title="50k Marathon" />
+          <AchievementBadge avatarSrc={Avatar2} title="20k Marathon" />
+          <AchievementBadge avatarSrc={Avatar1} title="5k Marathon" />
         </TabPanel>
       </>
       <JoinChallengeDialog

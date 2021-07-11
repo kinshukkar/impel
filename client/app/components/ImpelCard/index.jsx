@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,9 +14,9 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import { green, red } from '@material-ui/core/colors';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Badge from '@material-ui/core/Badge';
+import MailIcon from '@material-ui/icons/Mail';
+import Tooltip from '@material-ui/core/Tooltip';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 import Avatar1 from 'assets/images/avatars/avatar1.jpg';
 import Avatar2 from 'assets/images/avatars/avatar2.jpg';
@@ -48,7 +49,18 @@ const useStyles = makeStyles((theme) => ({
   red: {
     color: 'red',
   },
+  ellipsis: {
+    width: 200,
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+  },
 }));
+
+const defaultBadgeProps = {
+  color: 'secondary',
+  children: <MailIcon />,
+};
 
 const ImpelCard = (props) => {
   const {
@@ -77,7 +89,15 @@ const ImpelCard = (props) => {
             <DirectionsRunIcon />
           </Avatar>
 )}
-        title={data.title}
+        // title={<span className={classes.ellipsis}><Tooltip title={data.title} arrow>{data.title}</Tooltip></span>}
+        title={(
+          <>
+            <Tooltip title={data.title} arrow>
+              <div className={classes.ellipsis}>{data.title}</div>
+            </Tooltip>
+            {/* <Badge badgeContent={1000} max={999} {...defaultBadgeProps} /> */}
+          </>
+)}
         // subheader={(
         //   <>
         //     <div style={{ display: 'flex' }}>
@@ -111,6 +131,10 @@ const ImpelCard = (props) => {
             </div>
             <div style={{ display: 'flex' }}>
               <div className={classes.dark}>{new Date(data.endTime).toDateString()}</div>
+            </div>
+            <div style={{ display: 'flex' }}>
+              <div style={{ marginRight: 5, color: 'rgba(0, 0, 0, 0.54)' }}>Commit Amount: </div>
+              <div style={{ color: 'green', fontWeight: 'bold' }}>{`${data.commitAmount * 10 ** 8} GAS`}</div>
             </div>
           </div>
         )
