@@ -70,6 +70,17 @@ function* getUserJoinedChallengesSaga(action) {
   }
 }
 
+function* addChallengeToJoinedChallenges(challengeId) {
+  const homeState = yield select(makeSelectHome());
+  const { activeChallenges, userJoinedChallenges } = cloneDeep(homeState);
+  const addedChallenge = activeChallenges.filter((challenge) => Number(challenge.id) === challengeId);
+  userJoinedChallenges.unshift(addedChallenge);
+  yield put(updateHomeReducer({
+    joinChallengeStatus: 'success',
+    userJoinedChallenges,
+  }));
+}
+
 
 /* *** Joining a challenge with challengeId** * */
 function* joinChallengeSaga(action) {
@@ -78,6 +89,7 @@ function* joinChallengeSaga(action) {
     challengeId,
     gasAmount,
   } = action.payload;
+  yield put(updateHomeReducer({ joinChallengeStatus: 'loading' }));
   const globalState = yield select(makeSelectGlobal());
   const { walletDetails } = cloneDeep(globalState);
   const {
@@ -133,6 +145,7 @@ function* joinChallengeSaga(action) {
           console.log('Nothing.');
       }
     });
+  yield call(addChallengeToJoinedChallenges, challengeId);
 }
 
 export default function* home() {

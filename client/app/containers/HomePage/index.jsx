@@ -90,6 +90,7 @@ const HomePage = (props) => {
     activeChallenges,
     getUserJoinedChallengesStatus,
     userJoinedChallenges,
+    joinChallengeStatus,
   } = useSelector(
     (state) => state.home,
   );
@@ -140,6 +141,13 @@ const HomePage = (props) => {
     // setChallengeId(data);
     // setOpenJoinChallengeDialog(true);
   };
+
+  useEffect(() => {
+    if (joinChallengeStatus === 'success') {
+      // proceed to joined challenges tab
+      setValue(1);
+    }
+  }, [joinChallengeStatus]);
 
   useEffect(() => {
     dispatch(getAllActiveChallenges());
