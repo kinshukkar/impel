@@ -1,4 +1,4 @@
-![Impel](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/impel.png?token=AAKE3XAXY7ARXCOZCNV3SBLA5M7HM "Impel")
+![Impel](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/impel.png "Impel")
 
 # Impel
 
@@ -21,6 +21,9 @@ Key concepts and flows around the Impel solution -
 - Once the determination of the challenge winners is determined by the system, payouts will be made to the winning users by the Smart Contract. The payout would be 20% more than the committed amount for the user. 
 - Along with the bonus payout for the winners, a NFT Token would also be generated and associated with the user's account. This would serve as badges for winning the various challenges and would be displayed on the system. The Impel Token as it is termed will follow the NEP-11 NFT interface
 
+![Challenge Lifecycle](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/challenge_lifecycle.png "Challenge Lifecycle")
+
+
 ## Team 
 - Kinshuk Kar [Twitter](https://twitter.com/kinshukkar)
 - Pompita Sarkar [Twitter](https://twitter.com/sooperminion)
@@ -37,7 +40,7 @@ Key concepts and flows around the Impel solution -
 
 ## Architecture
 
-![Impel Architecture](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/arch.png?token=AAKE3XHAU4GMKTZHC3NVUY3A5M7TK "Architecture")
+![Impel Architecture](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/arch.png "Architecture")
 
 
 ## Roadmap
