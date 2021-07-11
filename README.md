@@ -33,6 +33,10 @@ Key concepts and flows around the Impel solution -
 - External system integration [Strava] as a source of truth to reduce/eliminate spurious usage of the app. Implemented as part of the Planation Submission Feedback
 - Sustainable and engaging economic model built-in to the system that can be extended to offer variations as well in the future. Again, this was refined as a result of the Planation Submission Feedback
 
+## Architecture
+
+![Impel Architecture](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/arch.png?token=AAKE3XEBNQEJPTAXYMBC6DTA5M6VY "Architecture")
+
 
 ## License
 Apache License, Version 2.0
