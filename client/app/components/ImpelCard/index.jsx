@@ -12,13 +12,14 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import { green } from '@material-ui/core/colors';
+import { green, red } from '@material-ui/core/colors';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 import Avatar1 from 'assets/images/avatars/avatar1.jpg';
 import Avatar2 from 'assets/images/avatars/avatar2.jpg';
+import { getDiffBetweenDatesInDays } from '../Utils/Utils';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,12 +45,15 @@ const useStyles = makeStyles((theme) => ({
   dark: {
     color: '#3c4d08',
   },
+  red: {
+    color: 'red',
+  },
 }));
 
 const ImpelCard = (props) => {
   const {
     data,
-    primaryBtnName,
+    joined,
     handleJoinChallenge,
   } = props;
 
@@ -99,25 +103,38 @@ const ImpelCard = (props) => {
         </div>
       </CardContent>
       <CardActions disableSpacing style={{ padding: 16 }}>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex' }}>
-            <div style={{ marginRight: 5, color: 'rgba(0, 0, 0, 0.54)' }}>Starts on: </div>
-            <div className={classes.dark}>{new Date(data.startTime).toDateString()}</div>
+        {joined ? (
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex' }}>
+              <div style={{ marginRight: 5, color: 'rgba(0, 0, 0, 0.54)' }}>Challenge ends in: </div>
+              <div className={classes.red}>{`${getDiffBetweenDatesInDays(new Date(), new Date(data.endTime))} days`}</div>
+            </div>
+            <div style={{ display: 'flex' }}>
+              <div className={classes.dark}>{new Date(data.endTime).toDateString()}</div>
+            </div>
           </div>
-          <div style={{ display: 'flex' }}>
-            <div style={{ marginRight: 5, color: 'rgba(0, 0, 0, 0.54)' }}>Ends on: </div>
-            <div className={classes.dark}>{new Date(data.endTime).toDateString()}</div>
-          </div>
-        </div>
+        )
+          : (
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex' }}>
+                <div style={{ marginRight: 5, color: 'rgba(0, 0, 0, 0.54)' }}>Starts on: </div>
+                <div className={classes.dark}>{new Date(data.startTime).toDateString()}</div>
+              </div>
+              <div style={{ display: 'flex' }}>
+                <div style={{ marginRight: 5, color: 'rgba(0, 0, 0, 0.54)' }}>Ends on: </div>
+                <div className={classes.dark}>{new Date(data.endTime).toDateString()}</div>
+              </div>
+            </div>
+          )}
         <Button
           variant="contained"
           // disable Submit button if current date before evaluation date
-          disabled={primaryBtnName === 'Submit' && (new Date() < new Date(data.evaluationTime))}
+          disabled={joined && (new Date() < new Date(data.evaluationTime))}
           color="primary"
           style={{ marginLeft: 'auto' }}
           onClick={() => handleJoinChallenge(Number(data.id))}
         >
-          {primaryBtnName}
+          {joined ? 'Submit' : 'Join'}
         </Button>
       </CardActions>
     </Card>
@@ -126,12 +143,12 @@ const ImpelCard = (props) => {
 
 ImpelCard.defaultProps = {
   data: {},
-  primaryBtnName: 'Join',
+  joined: false,
 };
 
 ImpelCard.propTypes = {
   data: PropTypes.object,
-  primaryBtnName: PropTypes.string,
+  joined: PropTypes.bool,
   handleJoinChallenge: PropTypes.func.isRequired,
 };
 

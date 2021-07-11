@@ -218,8 +218,8 @@ const HomePage = (props) => {
               return (
                 <Grid key={item.id} item xs={3}>
                   <ImpelCard
+                    joined
                     data={item}
-                    primaryBtnName="Submit"
                     handleJoinChallenge={() => handleClickOpenJoinChallengeDialog(item.id)}
                   />
                 </Grid>
