@@ -38,9 +38,31 @@ Key concepts and flows around the Impel solution -
 - External system integration [Strava] as a source of truth to reduce/eliminate spurious usage of the app. Implemented as part of the Planation Submission Feedback
 - Sustainable and engaging economic model built-in to the system that can be extended to offer variations as well in the future. Again, this was refined as a result of the Planation Submission Feedback
 
+## Economic Model
+
+The economic model behind the solution is presented below - 
+
+We will try to derive a simplistic unit-based economic scenario to determine the feasibility of the solution - 
+
+Setup: 100 units are contributed towards a particular challenge
+Assumption: Amount committed is proportional to the number of users in a challenge, i.e there is a consistent average amount that is committed per user. 
+
+Users won: **60% [60 units]**
+Users lost: **35% [35 units]** - Amount forfeited by the system
+Users not submitted: **5% [5 units]** - Amount forfeited by the system
+
+Payout based on 60% winners including bonus - **60*1.2 = 72 units**
+Average costs of running the system [Blockchain interactions, Server/System maintenance] - **20% or 20 units**
+Profit margin **[100 - (72 - 20)] = ~8%**
+
+Thus, the system would sustainable from a financial perspective. 
+
+As mentioned in the roadmap, the model would be further enhanced to incorporate these factors to determine the most optimum payouts and system based on %age or winners, challenge commit amounts, running costs, etc.
+
 ## Architecture
 
 ![Impel Architecture](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/arch.png "Architecture")
+
 
 
 ## Roadmap
