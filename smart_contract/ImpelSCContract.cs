@@ -9,13 +9,14 @@ using Neo.SmartContract.Framework.Services;
 
 namespace Impel
 {
-    [DisplayName("Impel.ImpelSCv0.4")]
+    [DisplayName("Impel.ImpelSCv0.6")]
     [ManifestExtra("Author", "Kinshuk Kar, Pompita Sarkar")]
     [ManifestExtra("Email", "kinshuk89@gmail.com")]
     [ManifestExtra("Description", "A novel motivation mechanism to assist people in getting fitter with social and financial rewards")]
     [ContractPermission("*", "onNEP17Payment")]
+    [ContractPermission("0x95bc4c2d84c0b5b0a028e83a5e70f198815a488e", "*")]
+    [ContractTrust("0x95bc4c2d84c0b5b0a028e83a5e70f198815a488e")]
     [ContractTrust("0xd2a4cff31913016155e38e474a2c06d08be276cf")]
-
     public class ImpelSCContract : SmartContract
     {
         static readonly ImpelStorage contractDataManager = new ImpelStorage();
@@ -43,6 +44,10 @@ namespace Impel
             }
         }
 
+        public static bool Verify()
+        {
+            return Runtime.CheckWitness(ToScripthash(contractDataManager.GetOwner()));
+        }
         private static void initialize() {
 
             contractDataManager.PutOwner(ToAddress((ByteString) Tx.Sender));
@@ -180,33 +185,31 @@ namespace Impel
         //     FetchUserChallengeEntries(challengeId, url, filter, callback, gasPrice);
 
         // }
-        public static void validateChallengeEntries(BigInteger challengeId, string url, string filter, string callback, long gasPrice)
+        public static void fetchChallengeEntries(BigInteger challengeId, string url, string filter, string callback, long gasPrice)
         {
-            Runtime.Log("Challenge ID " + challengeId);
-            Runtime.Log("URL " + url);
-            Runtime.Log("Filter " +filter);
-            Runtime.Log("Callback " + callback);
-            Runtime.Log("GAS " + gasPrice);
-            Runtime.Log("Starting to call");
-
             Oracle.Request(url, filter, callback, (ByteString)challengeId, gasPrice);
         }
 
         public static void fcecallback(string url, ByteString data, OracleResponseCode code, string result)
         {
-            Runtime.Log("Received call");
             if (Runtime.CallingScriptHash != Oracle.Hash) throw new Exception("Unauthorized!");
 
             if (code != OracleResponseCode.Success) throw new Exception("Oracle response failure with code " + (byte)code);
 
-            var records = (Map<ByteString, List<BigInteger>>) StdLib.JsonDeserialize(result);
-            evaluateChallengeEntries((BigInteger)data, records);
+            contractDataManager.PutOracleResp((BigInteger)data, "", result);
         }
 
-        private static void evaluateChallengeEntries(BigInteger challengeId, Map<ByteString, List<BigInteger>> activityRecords) {
+        public static void evaluateChallengeEntries(BigInteger challengeId) {
 
-            List<UserChallengeEntry> winningEntries = new List<UserChallengeEntry>();
+            if (!ToAddress((ByteString)Tx.Sender).Equals(contractDataManager.GetOwner())) { throw new Exception("Only the contract owner can do this"); }
+
+            string result = contractDataManager.GetOracleResp(challengeId, "");
+            contractDataManager.PutOracleResp(challengeId, "C", result);
+
+            Map<ByteString, List<BigInteger>> activityRecords = (Map<ByteString, List<BigInteger>>) StdLib.JsonDeserialize(result);
+
             Challenge challenge = contractDataManager.GetChallenge(challengeId);
+            contractDataManager.PutOracleResp(challengeId, "D", StdLib.Serialize(challenge) );
 
             List<UserChallengeEntry> entries = contractDataManager.GetSubscribedEntriesForChallenge(challengeId);
 
@@ -217,8 +220,10 @@ namespace Impel
                 }
 
                 List<BigInteger> records = activityRecords[entry.userKey];
+                contractDataManager.PutOracleResp(challengeId, "E", records.ToString());
                 BigInteger qualified = 0;
                 BigInteger aggregate = 0;
+
                 foreach (BigInteger record in records) {
 
                     aggregate = aggregate + record;
@@ -234,7 +239,6 @@ namespace Impel
                 }
                 if (qualified == 1) {
                     entry.state = UserChallengeEntry.UserChallengeState.DataSubmittedQualified;
-                    winningEntries.Add(entry);
                 } else {
                     entry.state = UserChallengeEntry.UserChallengeState.DataSubmittedNotQualified;              
                 }
@@ -246,6 +250,8 @@ namespace Impel
         }
         
         public static Boolean distributeRewards(BigInteger challengeId) {
+
+            if (!ToAddress((ByteString)Tx.Sender).Equals(contractDataManager.GetOwner())) { throw new Exception("Only the contract owner can do this"); }
 
             Challenge challenge = contractDataManager.GetChallenge(challengeId);
             List<UserChallengeEntry> entries = contractDataManager.GetSubscribedEntriesForChallenge(challengeId);
@@ -267,7 +273,7 @@ namespace Impel
                 GAS.Transfer(Runtime.ExecutingScriptHash, winningAccount, entry.commitAmount + entry.commitAmount / 5, null);
 
                 //Assign a winner's badge to the account for completing the challenge
-                Contract.Call(IMPEL_NFT_TOKEN_CONTRACT_HASH, "MintAndTransfer", CallFlags.All, new object[]{tokenName, tokenDescription, tokenURL, winningAccount});
+                Contract.Call(IMPEL_NFT_TOKEN_CONTRACT_HASH, "mintAndTransfer", CallFlags.All, new object[]{tokenName, tokenDescription, tokenURL, winningAccount});
             }
 
             OnRewardsDistributed(challengeId);
@@ -311,9 +317,13 @@ namespace Impel
         
         public void ResetLastChallengeId() => dappData.Put("LastChallengeId", 1);
 
+        public void PutOracleResp(BigInteger challengeId, string key, string resp) => dappData.Put("OracleData" + key + challengeId, resp);
+
+        public string GetOracleResp(BigInteger challengeId, string key) => dappData.Get("OracleData" + key + challengeId);
+
         public BigInteger GetAndIncrementLastChallengeId() {
             BigInteger lastChallengeId = (BigInteger) dappData.Get("LastChallengeId");
-            dappData.Put("LastChallengeId", lastChallengeId + 1);
+            dappData.Put("LastChallengeId", lastChallengeId);
             return lastChallengeId;
         }
 
@@ -381,8 +391,39 @@ namespace Impel
             while(iterator.Next()) {
                 var kvp = (object[])iterator.Value;
                 string key = (string)kvp[0];
-                Runtime.Log(key);
-                challengeEntries.Add(GetChallengeEntry(key));
+
+                byte[] keyArray = key.ToByteArray();
+                byte[] userKeyArray = userKey.ToByteArray();
+                int keyArrayLength = keyArray.Length;
+                int addressBeginIndex = 0;
+                int match_char_count = 0;
+                bool index_matched = false;
+                bool address_matched = false;
+                for (int i = 0; i < keyArrayLength; i++)
+                {
+                    byte n_char = 0x4e;
+                    if (keyArray[i] == n_char && index_matched == false) {
+                        index_matched = true;
+                        addressBeginIndex = i;
+                    }
+                    
+                    if (index_matched == true) {
+                        if (userKeyArray[i - addressBeginIndex] != keyArray[i]) {
+                            break;
+                        }
+
+                        userKeyArray[i - addressBeginIndex] = keyArray[i];
+                        match_char_count = match_char_count + 1;
+
+                        if (match_char_count > 32) {
+                            address_matched = true;
+                        }
+                    }
+                }
+                
+                if (address_matched)   {
+                    challengeEntries.Add(GetChallengeEntry(key));
+                }
             }
 
             return challengeEntries;
