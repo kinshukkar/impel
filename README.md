@@ -20,12 +20,8 @@ Key concepts and flows around the Impel solution -
 - Along with the bonus payout for the winners, a NFT Token would also be generated and associated with the user's account. This would serve as badges for winning the various challenges and would be displayed on the system. The Impel Token as it is termed will follow the NEP-11 NFT interface
 
 ## Team 
-Kinshuk Kar [Twitter](https://twitter.com/kinshukkar)
-Pompita Sarkar [Twitter](https://twitter.com/sooperminion)
+- Kinshuk Kar [Twitter](https://twitter.com/kinshukkar)
+- Pompita Sarkar [Twitter](https://twitter.com/sooperminion)
 
 ## License
 Apache License, Version 2.0
-
-
-Copyright 2021 Team Impel
-
