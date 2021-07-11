@@ -13,7 +13,7 @@ import rootSaga from './rootSagas';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['global'],
+  whitelist: ['global', 'home'],
   stateReconciler: autoMergeLevel2,
 };
 

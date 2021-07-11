@@ -58,10 +58,17 @@ const LoginPage = (props) => {
   const classes = useStyles();
   const { history: { push } } = props;
 
-  const [neoN3Data, setNeoN3Data] = useState({});
+  const [neoN3Data, _setNeoN3Data] = useState({});
+  const neoN3DataRef = React.useRef(neoN3Data);
+
+  const setNeoN3Data = (data) => {
+    neoN3DataRef.current = data;
+    _setNeoN3Data(data);
+  };
 
   const setN3Data = (data) => {
     setNeoN3Data(data);
+    console.log('neoN3DataRef--', neoN3DataRef.current);
   };
 
   useEffect(() => {

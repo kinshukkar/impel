@@ -8,15 +8,22 @@ import {
 } from 'react-router-dom';
 import { compose } from 'redux';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ImpelCard from 'components/ImpelCard';
-import config from 'utils/neon';
-import { getAllActiveChallenges } from './actions';
+import ErrorIcon from '@material-ui/icons/Error';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import { getAllActiveChallenges, getUserJoinedChallenges, joinChallenge } from './actions';
+import JoinChallengeDialog from './JoinChallengeDialog';
 
 function TabPanel(props) {
   const {
@@ -74,7 +81,6 @@ const HomePage = (props) => {
 
   const {
     walletDetails,
-    userDetails,
   } = useSelector(
     (state) => state.global,
   );
@@ -82,75 +88,81 @@ const HomePage = (props) => {
   const {
     getActiveChallengesStatus,
     activeChallenges,
+    getUserJoinedChallengesStatus,
+    userJoinedChallenges,
   } = useSelector(
     (state) => state.home,
   );
 
-  const [value, setValue] = React.useState(0);
+  const { provider_address } = walletDetails;
 
-  console.log('getActiveChallengesStatus--', getActiveChallengesStatus, 'activeChallenges--', activeChallenges);
+  const [value, setValue] = React.useState(0);
+  const [neoN3Data, setNeoN3Data] = React.useState({});
+  const [openJoinChallengeDialog, setOpenJoinChallengeDialog] = React.useState(false);
+  const [gasToJoinChallenge, setGasToJoinChallenge] = React.useState('');
+  const [challengeId, setChallengeId] = React.useState('');
+
+  const setN3Data = (data) => {
+    setNeoN3Data(data);
+  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    if (newValue === 1) {
+      const payload = { provider_address };
+      dispatch(getUserJoinedChallenges(payload));
+    } else if (newValue === 0) {
+      dispatch(getAllActiveChallenges());
+    }
+  };
+
+  const handleCloseJoinChallengeDialog = (newValue) => {
+    setOpenJoinChallengeDialog(false);
+
+    if (newValue) {
+      setGasToJoinChallenge(newValue);
+      const payload = {
+        neoN3Data,
+        gasAmount: newValue,
+        challengeId: Number(challengeId),
+      };
+      dispatch(joinChallenge(payload));
+    }
+  };
+
+  const handleClickOpenJoinChallengeDialog = (data) => {
+    setChallengeId((prevState) => {
+      return data;
+    });
+    setOpenJoinChallengeDialog((prevState) => {
+      return true;
+    });
+    // setChallengeId(data);
+    // setOpenJoinChallengeDialog(true);
   };
 
   useEffect(() => {
     dispatch(getAllActiveChallenges());
-  });
+    const payload = { provider_address };
+    dispatch(getUserJoinedChallenges(payload));
+  }, []);
 
-  // const allChallenges = [
-  //   {
-  //     id: 1,
-  //     title: 'July 10K Challenge',
-  //     startTime: '1 Jul 2021, 00:00:00',
-  //     endTime: '31 Jul 2021, 00:00:00',
-  //     evaluationTime: '15 Aug 2021, 00:00:00',
-  //     activityType: 0,
-  //     state: 0,
-  //     type: 0,
-  //     avatarId: 1,
-  //     value: 10000,
-  //   },
-  //   {
-  //     id: 2,
-  //     title: 'July 5K Challenge',
-  //     startTime: '1 Jul 2021, 00:00:00',
-  //     endTime: '31 Jul 2021, 00:00:00',
-  //     evaluationTime: '15 Aug 2021, 00:00:00',
-  //     activityType: 0,
-  //     state: 0,
-  //     type: 0,
-  //     avatarId: 1,
-  //     value: 10000,
-  //   },
-  //   {
-  //     id: 3,
-  //     title: 'Aug Sprint Marathon',
-  //     startTime: '1 Aug 2021, 00:00:00',
-  //     endTime: '31 Aug 2021, 00:00:00',
-  //     evaluationTime: '15 Sept 2021, 00:00:00',
-  //     activityType: 0,
-  //     state: 0,
-  //     type: 0,
-  //     avatarId: 2,
-  //     value: 10000,
-  //   },
-  // ];
-
-  // const activeChallenges = [
-  //   {
-  //     id: 3,
-  //     title: 'Aug Sprint Marathon',
-  //     startTime: '1 Aug 2021, 00:00:00',
-  //     endTime: '31 Aug 2021, 00:00:00',
-  //     evaluationTime: '15 Sept 2021, 00:00:00',
-  //     activityType: 0,
-  //     state: 0,
-  //     type: 0,
-  //     avatarId: 2,
-  //     value: 10000,
-  //   },
-  // ];
+  useEffect(() => {
+    if (Object.keys(neoN3Data).length > 0) {
+      // eslint-disable-next-line no-undef
+      const n3 = new NEOLineN3.Init();
+      console.log('inside homepage', n3);
+      setN3Data(n3);
+    } else {
+      // for cases when page is reloaded and NeoLineN3 is no more in scope
+      window.addEventListener('NEOLine.N3.EVENT.READY', () => {
+        // eslint-disable-next-line no-undef
+        const n3 = new NEOLineN3.Init();
+        console.log('inside login', n3);
+        setN3Data(n3);
+      });
+    }
+  }, []);
 
   return (
     <div className={classes.root}>
@@ -162,8 +174,8 @@ const HomePage = (props) => {
           onChange={handleChange}
           aria-label="tabs example"
         >
-          <Tab label="Active Challenges" />
-          <Tab label="Joined Challenges" />
+          <Tab label={`Active Challenges (${activeChallenges.length})`} />
+          <Tab label={`Joined Challenges (${userJoinedChallenges.length})`} />
           <Tab label="Badges" />
         </Tabs>
         <TabPanel value={value} index={0}>
@@ -172,7 +184,10 @@ const HomePage = (props) => {
             {getActiveChallengesStatus === 'success' && activeChallenges.map((item, key) => {
               return (
                 <Grid key={item.id} item xs={3}>
-                  <ImpelCard data={item} />
+                  <ImpelCard
+                    data={item}
+                    handleJoinChallenge={() => handleClickOpenJoinChallengeDialog(item.id)}
+                  />
                 </Grid>
               );
             })}
@@ -180,10 +195,25 @@ const HomePage = (props) => {
         </TabPanel>
         <TabPanel value={value} index={1}>
           <Grid container className="cards">
-            {activeChallenges.map((item, key) => {
+            {getUserJoinedChallengesStatus === 'loading' && <CircularProgress />}
+            {getUserJoinedChallengesStatus === 'success' && userJoinedChallenges.length === 0
+              && (
+              <div style={{
+                fontSize: 16, color: 'darkgray', margin: '30px 0', display: 'flex', alignItems: 'center',
+              }}
+              >
+                <ErrorIcon />
+              You have not subscribed to any challenge. Please go on to the Active Challenges tab and Join a Challenge
+              </div>
+              )}
+            {getUserJoinedChallengesStatus === 'success' && userJoinedChallenges.length > 0 && userJoinedChallenges.map((item, key) => {
               return (
                 <Grid key={item.id} item xs={3}>
-                  <ImpelCard data={item} />
+                  <ImpelCard
+                    data={item}
+                    primaryBtnName="Submit"
+                    handleJoinChallenge={() => handleClickOpenJoinChallengeDialog(item.id)}
+                  />
                 </Grid>
               );
             })}
@@ -193,6 +223,16 @@ const HomePage = (props) => {
           Item Three
         </TabPanel>
       </>
+      <JoinChallengeDialog
+        classes={{
+          paper: classes.paper,
+        }}
+        id="ringtone-menu"
+        keepMounted
+        open={openJoinChallengeDialog}
+        onClose={handleCloseJoinChallengeDialog}
+        value={gasToJoinChallenge}
+      />
     </div>
   );
 };

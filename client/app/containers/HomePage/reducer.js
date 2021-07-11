@@ -19,6 +19,9 @@ import {
 export const initialState = {
   getActiveChallengesStatus: '',
   activeChallenges: [],
+  getUserJoinedChallengesStatus: '',
+  userJoinedChallenges: [],
+  joinChallengeStatus: '',
 };
 
 /* eslint-disable default-case, no-param-reassign */

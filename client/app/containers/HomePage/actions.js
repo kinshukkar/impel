@@ -19,6 +19,8 @@ import {
   GET_ACTIVE_CHALLENGES,
   UPDATE_HOME_REDUCER,
   RESET_HOME_STATE,
+  GET_USER_JOINED_CHALLENGES,
+  JOIN_CHALLENGE,
 } from './constants';
 
 export const getAllActiveChallenges = (payload) => {
@@ -27,6 +29,21 @@ export const getAllActiveChallenges = (payload) => {
     payload,
   };
 };
+
+export const getUserJoinedChallenges = (payload) => {
+  return {
+    type: GET_USER_JOINED_CHALLENGES,
+    payload,
+  };
+};
+
+export const joinChallenge = (payload) => {
+  return {
+    type: JOIN_CHALLENGE,
+    payload,
+  };
+};
+
 
 export const resetHomeState = (reducerState) => {
   return {

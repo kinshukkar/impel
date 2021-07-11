@@ -115,13 +115,13 @@ export const createUser = (userAddress, username) => {
 
 const addChallenge = () => {
   return createTransaction(config.account, config.impelScriptHash, 'addChallenge', [
-    Neon.sc.ContractParam.string('July 10K Challenge'),
-    Neon.sc.ContractParam.integer(1625097600000),
-    Neon.sc.ContractParam.integer(1627689600000),
-    Neon.sc.ContractParam.integer(1628985600000),
-    Neon.sc.ContractParam.integer(0), // ChallengeActivityTypeWalkRun
-    Neon.sc.ContractParam.integer(0), // ChallengeTypeMax
-    Neon.sc.ContractParam.integer(10000),
+    sc.ContractParam.string('July 10K Challenge'),
+    sc.ContractParam.integer(1625097600000),
+    sc.ContractParam.integer(1627689600000),
+    sc.ContractParam.integer(1628985600000),
+    sc.ContractParam.integer(0), // ChallengeActivityTypeWalkRun
+    sc.ContractParam.integer(0), // ChallengeTypeMax
+    sc.ContractParam.integer(10000),
   ]);
 };
 
@@ -168,8 +168,9 @@ export async function getChallenges(active) {
 
   const allChallengeElements = result.stack[0].value;
   const challenges = [];
-  for (let i = allChallengeElements.length - 1; i >= 0; i - 1) {
-    const elements = allChallengeElements[i].value;
+
+  allChallengeElements.forEach((challengeElement) => {
+    const elements = challengeElement.value;
     const challenge = {};
     challenge.id = elements[0].value;
     challenge.title = Neon.u.base642utf8(elements[1].value);
@@ -180,11 +181,8 @@ export async function getChallenges(active) {
     challenge.activityType = elements[6].value;
     challenge.type = elements[7].value;
     challenge.value = elements[8].value;
-
     challenges.push(challenge);
-  }
-
-  console.log('challenges---', challenges);
+  });
 
   return challenges;
 }
@@ -226,26 +224,30 @@ async function getChallengeDetails(challengeId) {
   return parse_challenge(elements);
 }
 
-async function getUserChallenges(address) {
-  const result = await config.rpcClient.invokeFunction(
-    config.impelScriptHash,
-    'getSubscribedChallengesForUser',
-    [Neon.sc.ContractParam.string(address)],
-  );
-
-  const allEntries = result.stack[0].value;
+export async function getUserChallenges(address) {
   const entries = [];
-  for (let i = allEntries.length - 1; i >= 0; i - 1) {
-    const elements = allEntries[i].value;
+  try {
+    const result = await config.rpcClient.invokeFunction(
+      config.impelScriptHash,
+      'getSubscribedChallengesForUser',
+      [sc.ContractParam.string(address)],
+    );
 
-    const entry = {};
-    entry.user = Neon.u.base642utf8(elements[0].value);
-    entry.challengeId = parseInt(elements[1].value, 10);
-    entry.commitAmount = elements[2].value / 100000000;
-    entry.state = parseInt(elements[3].value, 10);
+    const allEntries = result.stack[0].value;
+    allEntries.forEach((ent) => {
+      const elements = ent.value;
 
-    entries.push(entry);
+      const entry = {};
+      entry.user = Neon.u.base642utf8(elements[0].value);
+      entry.challengeId = parseInt(elements[1].value, 10);
+      entry.commitAmount = elements[2].value / 100000000;
+      entry.state = parseInt(elements[3].value, 10);
+
+      entries.push(entry);
+    });
+
+    return entries;
+  } catch (err) {
+    return entries;
   }
-
-  return entries;
 }

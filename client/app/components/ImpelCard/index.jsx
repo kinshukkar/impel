@@ -49,6 +49,8 @@ const useStyles = makeStyles((theme) => ({
 const ImpelCard = (props) => {
   const {
     data,
+    primaryBtnName,
+    handleJoinChallenge,
   } = props;
 
   const getAvatar = () => {
@@ -72,18 +74,18 @@ const ImpelCard = (props) => {
           </Avatar>
 )}
         title={data.title}
-        subheader={(
-          <>
-            <div style={{ display: 'flex' }}>
-              <div style={{ marginRight: 5 }}>Starts on: </div>
-              <div className={classes.dark}>{new Date(data.startTime).toDateString()}</div>
-            </div>
-            <div style={{ display: 'flex' }}>
-              <div style={{ marginRight: 5 }}>Ends on: </div>
-              <div className={classes.dark}>{new Date(data.endTime).toDateString()}</div>
-            </div>
-          </>
-        )}
+        // subheader={(
+        //   <>
+        //     <div style={{ display: 'flex' }}>
+        //       <div style={{ marginRight: 5 }}>Starts on: </div>
+        //       <div className={classes.dark}>{new Date(data.startTime).toDateString()}</div>
+        //     </div>
+        //     <div style={{ display: 'flex' }}>
+        //       <div style={{ marginRight: 5 }}>Ends on: </div>
+        //       <div className={classes.dark}>{new Date(data.endTime).toDateString()}</div>
+        //     </div>
+        //   </>
+        // )}
       />
       <CardMedia
         className={classes.media}
@@ -107,8 +109,15 @@ const ImpelCard = (props) => {
             <div className={classes.dark}>{new Date(data.endTime).toDateString()}</div>
           </div>
         </div>
-        <Button variant="contained" color="primary" style={{ marginLeft: 'auto' }}>
-          Join
+        <Button
+          variant="contained"
+          // disable Submit button if current date before evaluation date
+          disabled={primaryBtnName === 'Submit' && (new Date() < new Date(data.evaluationTime))}
+          color="primary"
+          style={{ marginLeft: 'auto' }}
+          onClick={() => handleJoinChallenge(Number(data.id))}
+        >
+          {primaryBtnName}
         </Button>
       </CardActions>
     </Card>
@@ -117,10 +126,13 @@ const ImpelCard = (props) => {
 
 ImpelCard.defaultProps = {
   data: {},
+  primaryBtnName: 'Join',
 };
 
 ImpelCard.propTypes = {
   data: PropTypes.object,
+  primaryBtnName: PropTypes.string,
+  handleJoinChallenge: PropTypes.func.isRequired,
 };
 
 export default ImpelCard;

@@ -10,6 +10,8 @@
  */
 
 export const GET_ACTIVE_CHALLENGES = 'impel-app/Home/GET_ACTIVE_CHALLENGES';
+export const GET_USER_JOINED_CHALLENGES = 'impel-app/Home/GET_USER_JOINED_CHALLENGES';
+export const JOIN_CHALLENGE = 'impel-app/Home/JOIN_CHALLENGE';
 
 export const UPDATE_HOME_REDUCER = 'impel-app/Home/UPDATE_HOME_REDUCER';
 export const RESET_HOME_STATE = 'impel-app/Home/RESET_HOME_STATE';
