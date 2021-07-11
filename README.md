@@ -21,6 +21,7 @@ Key concepts and flows around the Impel solution -
 
 ## Team 
 - Kinshuk Kar [Twitter](https://twitter.com/kinshukkar)
+- Pompita Sarkar [Twitter](https://twitter.com/sooperminion)
 
 ## Pitch
 
@@ -31,7 +32,7 @@ Key concepts and flows around the Impel solution -
 - Integrated frontend interface implemented for the dapp powered by Neoline wallet for user actions and Neon JS for system activities over the smart contract.
 - External system integration [Strava] as a source of truth to reduce/eliminate spurious usage of the app. Implemented as part of the Planation Submission Feedback
 - Sustainable and engaging economic model built-in to the system that can be extended to offer variations as well in the future. Again, this was refined as a result of the Planation Submission Feedback
-- Pompita Sarkar [Twitter](https://twitter.com/sooperminion)
+
 
 ## License
 Apache License, Version 2.0
