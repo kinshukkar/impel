@@ -71,11 +71,11 @@ As mentioned in the roadmap, the model would be further enhanced to incorporate 
 
 There are 2 Smart Contracts that are part of the project
 
-Impel.ImpelSCv1.0 (The primary smart contract)
-Contract Hash - 0x534efcbc737526e49a158355a134fc317db3b406
+**Impel.ImpelSCv1.0** (The primary smart contract)
+Contract Hash - **0x534efcbc737526e49a158355a134fc317db3b406**
 
-Impel.ImpelTokenv1.0 (The NFT smart contract)
-Contract Hash - 0xdfa3dca56168dd9a9ed96e247def777af4166de2
+**Impel.ImpelTokenv1.0** (The NFT smart contract)
+Contract Hash - **0xdfa3dca56168dd9a9ed96e247def777af4166de2**
 
 #### ImpelSC
 
