@@ -66,12 +66,61 @@ As mentioned in the roadmap, the model would be further enhanced to incorporate 
 ![Impel Architecture](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/arch.png "Architecture")
 
 ## Solution
- 1. SmartContract
- 2. Frontend
+
+### SmartContract
+
+There are 2 Smart Contracts that are part of the project
+
+Impel.ImpelSCv1.0 (The primary smart contract)
+Contract Hash - 0x534efcbc737526e49a158355a134fc317db3b406
+
+Impel.ImpelTokenv1.0 (The NFT smart contract)
+Contract Hash - 0xdfa3dca56168dd9a9ed96e247def777af4166de2
+
+#### ImpelSC
+
+There is a class `ImpelStorage` for managing the data and supporting the CRUD service layer.
+
+There are 3 main objects in the system `Challenge`, `User`, and `UserChallenge`
+
+`Challenge` objects can only be created by the contract owner and has then necessary details. `challengeActivityType` would be used for the various types of activities (beginning with Walk/Run data). `challengeType` would represent how the challenge is evaluated (Two types are currently supported - Max in an activity and Aggregate across the challenge period). This is used to determine the challenge winners along with the `challengeValue` field. The `challengeState` field is used to track the lifecycle of the challenge, whether it has not started, currently active, ended and submission going on, and evaluation completed
+
+`User` object stores the username against their address when they register via `createUser`
+
+`UserChallengeEntry` stores the mapping between the User and Challenge object once they join a particular challenge. It stores the committed ammount in GAS along with the user and challenge references. It also contains the `state` field that would trace the submission and evaluation states for a challenge for the particular user.
+
+##### Joining a challenge
+Users would join a challenge by transferring GAS token (which becomes the committed amount for the challenge) to the Smart Contract address. 
+The arguments that need to be passed to the `transfer` call are `['join_challenge', <challenge_id>]` 
+This is implemented in the `OnNEP17Payment` callback and managed by the Neoline extension on the frontend 
+
+##### Challenge Lifecycle
+`updateChallengeState` method is used to manage the lifecycle of the challenge. It checks and update the state of the Challenge based on the current timestamp. 
+This would be invoked as a daily cron job from the backend (Yet to be implemented)
+
+During the state when the challenge is `ChallengeStateActive` there would be no interaction from the user or the smart contract till the endTime of the challenge is reached
+
+After the challenge `endTime` has crossed the challenge would move to `ChallengeStateCompleted`. Now the user would be able to submit the entries for the challenge. The data for each user will not go into the Smart Contract but would be managed by the backend. Submission would be allowed for a period of 15 days from the challenge ending and that is denoted by the `evaluationTime` field. The UserChallengeState will also be updated to reflect that data has been submitted.
+
+##### Challenge Evaluation
+Once the challenge evaluationTime has crossed, the evaluation process will begin. Here are the steps that would be triggered by the system contract owner - 
+
+`fetchChallengeEntries` - The first step would be fetching the activity records from the backend via an OracleRequest. The data would be of the form of `Map<String, List<BigInteger>>` where the key is the user address and the value is a list of all activity entries denoted as integer representing the distance travelled in case of Walk/Run Challenge implemented.
+
+`evaluateChallengeEntries` - After the records are fetched, the evaluateChallengeEntries method would be triggered. This would iterate over all the entries for a particular challenge, look at their activity records  from the Oracle Response Map and then perform the evaluation logic based on the activity records and the type of activity. The method would just update the `UserChallenge` Record with the appropriate state of `DataSubmittedQualified` or `DataSubmittedNotQualified`
+ 
+##### Rewards 
+The final step in the process would be the distrubution of the rewards based on the status determined above. 
+
+`distributeRewards` - It would iterate over all the winning entries of the challenge and transfer the commmitted GAS back to user including a **20%** bonus. 
+It would also mint the IMPT Token NFT corresponding to the Challenge and assign it to the user.
+ 
+### Frontend
    * React Web App built with `React 16.9.0 and Redux Saga` (to make app side effects more efficient to manage and handle)
    * Includes a built-in Auth layer, that logs in a user into the system after connecting to Neo Wallet, and authenticates by checking whether the user is registered into the system.
    * Makes use of NeoLineN3 extension as an interface to connect to Neo Wallet.
-   * 
+   
+```
               // to initialise NeoLine
               window.addEventListener('NEOLine.N3.EVENT.READY', () => {
                 const n3 = new NEOLineN3.Init();
@@ -100,7 +149,8 @@ As mentioned in the roadmap, the model would be further enhanced to incorporate 
                     label: 'N3-Name',
                     address: 'NfuwpaQ1A2xaeVbxWe8FRtaRgaMa8yF3YM'
                 }
-                
+```
+     
    * [This](https://neoline.io/dapi/N3.html) document has been used to refer to NeoLineN3 apis.
    * After successful authentication, user is redirected to their home page, where they can see all 'Active Challenges', 'Joined Challenges' and 'Your Badges' (badges earned from winning a challenge, if any)
    * [NeoJS](https://dojo.coz.io/neo3/neon-js/) library has been used to interact with Smart Contract. This file can be found in `/client/app/utils/neon.js`.
@@ -113,7 +163,7 @@ As mentioned in the roadmap, the model would be further enhanced to incorporate 
             ]);
           };
     
- 3. Backend
+### Backend
 
 
 
