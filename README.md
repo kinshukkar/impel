@@ -65,6 +65,56 @@ As mentioned in the roadmap, the model would be further enhanced to incorporate 
 
 ![Impel Architecture](https://raw.githubusercontent.com/kinshukkar/impel/main/docs/arch.png "Architecture")
 
+## Solution
+ 1. SmartContract
+ 2. Frontend
+   * React Web App built with `React 16.9.0 and Redux Saga` (to make app side effects more efficient to manage and handle)
+   * Includes a built-in Auth layer, that logs in a user into the system after connecting to Neo Wallet, and authenticates by checking whether the user is registered into the system.
+   * Makes use of NeoLineN3 extension as an interface to connect to Neo Wallet.
+   * 
+              // to initialise NeoLine
+              window.addEventListener('NEOLine.N3.EVENT.READY', () => {
+                const n3 = new NEOLineN3.Init();
+                console.log('inside login', n3);
+                setN3Data(n3);
+              });
+              // to get address
+              neolineN3.pickAddress()
+                .then(result => {
+                    const { label, address } = result;
+                    console.log('label:' + label);
+                    console.log('address' + address);
+                })
+                .catch(({type: string, description: string, data: any}) => {
+                    switch(type) {
+                        case 'NO_PROVIDER':
+                            console.log('No provider available.');
+                            break;
+                        case 'CANCELED':
+                            console.log('The user cancels, or refuses the dapps request');
+                            break;
+                    }
+                });
+                 /*Example response*/
+                {
+                    label: 'N3-Name',
+                    address: 'NfuwpaQ1A2xaeVbxWe8FRtaRgaMa8yF3YM'
+                }
+                
+   * [This](https://neoline.io/dapi/N3.html) document has been used to refer to NeoLineN3 apis.
+   * After successful authentication, user is redirected to their home page, where they can see all 'Active Challenges', 'Joined Challenges' and 'Your Badges' (badges earned from winning a challenge, if any)
+   * [NeoJS](https://dojo.coz.io/neo3/neon-js/) library has been used to interact with Smart Contract. This file can be found in `/client/app/utils/neon.js`.
+   * Simple example for usage of NeoJS - 
+   *
+         const createUser = (userAddress, username) => {
+            return createTransaction(config.account, config.impelScriptHash, 'registerUser', [
+              sc.ContractParam.string(userAddress),
+              sc.ContractParam.string(username),
+            ]);
+          };
+    
+ 3. Backend
+
 
 
 ## Roadmap
