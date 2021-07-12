@@ -1,5 +1,7 @@
 //import { STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET, STRAVA_CALLBACK_URL} from "./constants";
 const {STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET, STRAVA_CALLBACK_URL} = require('./constants')
+const { MongoClient } = require("mongodb");
+
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
@@ -9,8 +11,10 @@ var cors = require("cors");
 var passport = require("passport");
 var StravaStrategy = require('passport-strava-oauth2').Strategy;
 
-var monk = require('monk');
-var db = monk('127.0.0.1:27017/impel');
+const uri =
+  "mongodb://139.59.77.81:27017/?poolSize=20&writeConcern=majority";
+// Create a new MongoClient
+const client = new MongoClient(uri);
 
 var indexRouter = require('./routes/index');
 var userRouter = require('./routes/user');
@@ -29,34 +33,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(function(req, res, next) {
-    req.db = db;
+    req.dbclient = client;
     next();
 });
-
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
-});
-
-passport.use(new StravaStrategy({
-    clientID: STRAVA_CLIENT_ID,
-    clientSecret: STRAVA_CLIENT_SECRET,
-    callbackURL: STRAVA_CALLBACK_URL
-  },
-  function(accessToken, refreshToken, profile, done) {
-    process.nextTick(function () {
-      
-      console.log(profile);
-      return done(null, profile);
-    });
-  }
-));
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 /**
  * -----------------------------------------------------------------------------
@@ -76,16 +55,16 @@ app.all('/*', function(req, res, next) {
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 
-app.get('/auth/strava',
-  passport.authenticate('strava'));
+// app.get('/auth/strava',
+//   passport.authenticate('strava'));
 
-app.get('/auth/strava/callback', 
-  passport.authenticate('strava', { failureRedirect: 'http://127.0.0.1:5600/auth/notfound' }),
-  function(req, res) {
-    // Successful authentication, redirect home.
-    console.log("TRYING TO REDIRECT")
-    res.redirect('http://127.0.0.1:5600/strava');
-});
+// app.get('/auth/strava/callback', 
+//   passport.authenticate('strava', { failureRedirect: 'http://127.0.0.1:5600/auth/notfound' }),
+//   function(req, res) {
+//     // Successful authentication, redirect home.
+//     console.log("TRYING TO REDIRECT")
+//     res.redirect('http://127.0.0.1:5600/strava');
+// });
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

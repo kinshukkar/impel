@@ -2,7 +2,7 @@ const STRAVA_CLIENT_ID = 67538;
 
 const STRAVA_CLIENT_SECRET = "4a7cc7df07224b0cf07d8a12505369f58fa63544";
 
-const STRAVA_CALLBACK_URL = "http://127.0.0.1:9000/auth/strava/callback";
+const STRAVA_CALLBACK_URL = "http://127.0.0.1:9000/user/strava-auth/callback/";
 
 
 module.exports = {
