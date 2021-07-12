@@ -165,7 +165,9 @@ It would also mint the IMPT Token NFT corresponding to the Challenge and assign 
     
 ### Backend
 
+The backend layer is implemented via a `node-js` app. It is primarily to manage the authentication pieces with STRAVA as well as fetch and normalize the activity records to make it standardized for access by the blockchain via Oracle.
 
+This could be easily extended to other applications like Strava and keeping the interface consistent.  
 
 ## Roadmap
 
