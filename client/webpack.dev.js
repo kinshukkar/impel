@@ -27,6 +27,7 @@ const config = {
   },
 
   devServer: {
+    disableHostCheck: true,
     hot: true,
     watchOptions: {
       aggregateTimeout: 300,

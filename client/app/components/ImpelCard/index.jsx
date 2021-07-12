@@ -66,6 +66,7 @@ const ImpelCard = (props) => {
   const {
     data,
     joined,
+    provider_address,
     hasUserJoined,
     handleJoinChallenge,
   } = props;
@@ -93,7 +94,7 @@ const ImpelCard = (props) => {
         // title={<span className={classes.ellipsis}><Tooltip title={data.title} arrow>{data.title}</Tooltip></span>}
         title={(
           <>
-            <Tooltip title={data.title} arrow>
+            <Tooltip title={data.title} arrow="true">
               <div className={classes.ellipsis}>{data.title}</div>
             </Tooltip>
             {/* <Badge badgeContent={1000} max={999} {...defaultBadgeProps} /> */}
@@ -119,7 +120,7 @@ const ImpelCard = (props) => {
       />
       <CardContent>
         <div>
-          <span style={{ color: 'rgba(0, 0, 0, 0.54)' }}>This is a bike challenge, which will be evaluated on </span>
+          <span style={{ color: 'rgba(0, 0, 0, 0.54)' }}>This is a running challenge, which will be evaluated on </span>
           <span className={classes.dark}>{new Date(data.evaluationTime).toDateString()}</span>
         </div>
       </CardContent>
@@ -151,16 +152,40 @@ const ImpelCard = (props) => {
               </div>
             </div>
           )}
-        <Button
+        {joined ? (
+          <Button
+            variant="contained"
+          // disable Submit button if current date before evaluation date
+            // disabled={new Date() < new Date(data.evaluationTime)}
+            color="primary"
+            href={`http://localhost:9000/user/strava-auth/?provider_address=${provider_address}&challengeId=${data.challengeId}&startTime=${data.startTime}&endTime=${data.endTime}`}
+            style={{ marginLeft: 'auto' }}
+          >
+          Submit
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+          // disable Submit button if current date before evaluation date
+            disabled={hasUserJoined}
+            color="primary"
+            style={{ marginLeft: 'auto' }}
+            onClick={() => handleJoinChallenge(Number(data.id))}
+          >
+          Join
+          </Button>
+        )}
+        {/* <Button
           variant="contained"
           // disable Submit button if current date before evaluation date
-          disabled={(joined && (new Date() < new Date(data.evaluationTime))) || hasUserJoined}
+          // disabled={(joined && (new Date() < new Date(data.evaluationTime))) || hasUserJoined}
           color="primary"
+          href={`/user/strava-auth/?provider_address=${provider_address}&challenge_id=${data.challengeId}&startTime=${data.startTime}&endTime=${data.endTime}`}
           style={{ marginLeft: 'auto' }}
           onClick={() => handleJoinChallenge(Number(data.id))}
         >
           {joined ? 'Submit' : 'Join'}
-        </Button>
+        </Button> */}
       </CardActions>
     </Card>
   );
@@ -174,6 +199,7 @@ ImpelCard.defaultProps = {
 
 ImpelCard.propTypes = {
   data: PropTypes.object,
+  provider_address: PropTypes.string.isRequired,
   hasUserJoined: PropTypes.bool,
   joined: PropTypes.bool,
   handleJoinChallenge: PropTypes.func.isRequired,

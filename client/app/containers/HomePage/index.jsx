@@ -217,6 +217,7 @@ const HomePage = (props) => {
               return (
                 <Grid key={item.id} item xs={3}>
                   <ImpelCard
+                    provider_address={provider_address}
                     hasUserJoined={userJoinedChallenges
                       .findIndex((userJoinedChallenge) => userJoinedChallenge.challengeId === Number(item.id)) > -1}
                     data={item}
@@ -245,6 +246,7 @@ const HomePage = (props) => {
                 <Grid key={item.id} item xs={3}>
                   <ImpelCard
                     joined
+                    provider_address={provider_address}
                     data={item}
                     handleJoinChallenge={() => handleClickOpenJoinChallengeDialog(item.id)}
                   />

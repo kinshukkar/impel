@@ -32,7 +32,7 @@
     "import/prefer-default-export": "off",
     "func-names": "off",
     "arrow-body-style": "off",
-    "max-len": [2, {"code": 140, "tabWidth": 4, "ignoreUrls": true}],
+    "max-len": "off",
     "no-mixed-spaces-and-tabs": "off",
     "no-tabs": "off",
     "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
