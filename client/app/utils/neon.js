@@ -8,7 +8,7 @@ console.log('Neon---', Neon);
 
 export const config = {
   networkMagic: 844378958,
-  impelScriptHash: 'a23aabd7079c16c1fe64ab4e8223b65ddeac5450',
+  impelScriptHash: '534efcbc737526e49a158355a134fc317db3b406',
   impelTokenScriptHash: 'dfa3dca56168dd9a9ed96e247def777af4166de2',
   rpcAddress: 'http://seed2t.neo.org:20332',
   walletWif: 'KxxedRx1rJ9dZ4ptsfXgYVSsLjkPud3ZxgZzdkbN1JGVk6MdbM7F8',

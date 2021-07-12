@@ -105,7 +105,7 @@ function* joinChallengeSaga(action) {
       },
       {
         type: 'Address',
-        value: 'NTEigSf1LTNqMvujAuVgJg9Po3dGzdfB2b',
+        value: 'NLXRiExdSTXbfnwmb7r8bFcM6FNdNZsmwc',
       },
       {
         type: 'Integer',
