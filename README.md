@@ -165,9 +165,15 @@ It would also mint the IMPT Token NFT corresponding to the Challenge and assign 
     
 ### Backend
 
-The backend layer is implemented via a `node-js` app. It is primarily to manage the authentication pieces with STRAVA as well as fetch and normalize the activity records to make it standardized for access by the blockchain via Oracle.
+The backend layer is implemented via a `node-js` app. It is primarily to manage the authentication pieces with STRAVA using OAuth2. Once authenticated, it would fetch all the activity records within the given challenge period via the Strava List Activities method - https://developers.strava.com/docs/reference/#api-Activities-getLoggedInAthleteActivities
+This is done in the backend to normalize all the records for easy consumption for the smart contract as well as keeping the interface consistent as more integrations would be added later.
+The records data are stored in mongodb instance under `challenges` collection and would keep storing the activity records via the Strava APIs above as and when people submit their records during the submission periond after the challenge ends.
 
-This could be easily extended to other applications like Strava and keeping the interface consistent.  
+### Open Issues
+
+- Error in fetching tokens list  for a user from the NFT Contract - Interop iterator
+- Validation of aggregate type challenges fails for certain scenarios
+- State validations for joining a challenge to be added
 
 ## Roadmap
 
