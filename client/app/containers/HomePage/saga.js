@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   put,
   call,
@@ -8,7 +9,7 @@ import { push } from 'connected-react-router';
 import {
   wallet,
 } from '@cityofzion/neon-js';
-import { getActiveChallenges, getUserChallenges } from 'utils/neon';
+import { getActiveChallenges, getUserChallenges, getChallengeDetails } from 'utils/neon';
 import { cloneDeep } from 'lodash';
 import {
   GET_ACTIVE_CHALLENGES, GET_USER_JOINED_CHALLENGES, JOIN_CHALLENGE,
@@ -38,6 +39,16 @@ function* getActiveChallengesSaga() {
   }
 }
 
+function* getUserJoinedChallengeDetails(challengeId) {
+  try {
+    const response = yield getChallengeDetails(challengeId);
+    console.log('response--', response);
+    return response;
+  } catch (err) {
+    console.log('could not fetch getUserJoinedChallengeDetails--', err);
+  }
+}
+
 function* getUserJoinedChallengesSaga(action) {
   const { provider_address } = action.payload;
   yield put(updateHomeReducer({
@@ -46,18 +57,18 @@ function* getUserJoinedChallengesSaga(action) {
   try {
     const response = yield getUserChallenges(provider_address);
     console.log('getUserJoinedChallenges response--', response);
-    const homeState = yield select(makeSelectHome());
-    const { activeChallenges } = cloneDeep(homeState);
+    // const homeState = yield select(makeSelectHome());
+    // const { activeChallenges } = cloneDeep(homeState);
     const merged = [];
 
     for (let i = 0; i < response.length; i += 1) {
-      merged.push({
-        ...response[i],
-        ...(activeChallenges.find((activeChallenge) => Number(activeChallenge.id) === response[i].challengeId)),
-      });
+      try {
+        const joinedChallengeDetails = yield getUserJoinedChallengeDetails(response[i].challengeId);
+        merged.push({ ...response[i], ...joinedChallengeDetails });
+      } catch (err) {
+        console.log(err);
+      }
     }
-
-    console.log(merged);
     yield put(updateHomeReducer({
       getUserJoinedChallengesStatus: 'success',
       userJoinedChallenges: merged,

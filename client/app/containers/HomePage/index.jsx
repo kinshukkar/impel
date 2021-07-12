@@ -260,7 +260,7 @@ const HomePage = (props) => {
           <AchievementBadge avatarSrc={Avatar2} title="20k Marathon" />
           <AchievementBadge avatarSrc={Avatar1} title="5k Marathon" />
         </TabPanel>
-        <Fab
+        {/* <Fab
           variant="extended"
           href="http://localhost:9000/auth/strava"
           aria-label="Connect to Strava"
@@ -269,7 +269,7 @@ const HomePage = (props) => {
         >
           <DirectionsRunIcon />
           Connect to Strava
-        </Fab>
+        </Fab> */}
       </>
       <JoinChallengeDialog
         classes={{

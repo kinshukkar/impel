@@ -213,7 +213,7 @@ function parse_challenge(elements) {
 
 // console.log(await getChallengeDetails(1));
 // console.log(await getChallengeDetails(2));
-async function getChallengeDetails(challengeId) {
+export async function getChallengeDetails(challengeId) {
   const result = await config.rpcClient.getStorage(
 			  config.impelScriptHash,
 			  Neon.u.str2hexstring('C*') + Neon.u.int2hex(challengeId),

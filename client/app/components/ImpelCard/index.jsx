@@ -128,8 +128,20 @@ const ImpelCard = (props) => {
         {joined ? (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex' }}>
-              <div style={{ marginRight: 5, color: 'rgba(0, 0, 0, 0.54)' }}>Challenge ends in: </div>
-              <div className={classes.red}>{`${getDiffBetweenDatesInDays(new Date(), new Date(data.endTime))} days`}</div>
+              {new Date() > new Date(data.endTime) ? (
+                <>
+                  <div style={{ marginRight: 5, color: 'rgba(0, 0, 0, 0.54)' }}>Submission ends in: </div>
+                  <div className={classes.red}>{`${getDiffBetweenDatesInDays(new Date(), new Date(data.endTime))} days`}</div>
+                </>
+              )
+                : (
+                  <>
+                    <div style={{ marginRight: 5, color: 'rgba(0, 0, 0, 0.54)' }}>Challenge ends in: </div>
+                    <div className={classes.red}>{`${getDiffBetweenDatesInDays(new Date(), new Date(data.endTime))} days`}</div>
+                  </>
+                )}
+              {/* <div style={{ marginRight: 5, color: 'rgba(0, 0, 0, 0.54)' }}>Challenge ends in: </div>
+              <div className={classes.red}>{`${getDiffBetweenDatesInDays(new Date(), new Date(data.endTime))} days`}</div> */}
             </div>
             <div style={{ display: 'flex' }}>
               <div className={classes.dark}>{new Date(data.endTime).toDateString()}</div>
@@ -156,9 +168,9 @@ const ImpelCard = (props) => {
           <Button
             variant="contained"
           // disable Submit button if current date before evaluation date
-            // disabled={new Date() < new Date(data.evaluationTime)}
+            disabled={new Date() < new Date(data.endTime)}
             color="primary"
-            href={`http://localhost:9000/user/strava-auth/?provider_address=${provider_address}&challengeId=${data.challengeId}&startTime=${data.startTime}&endTime=${data.endTime}`}
+            href={`http://139.59.77.81/:9000/user/strava-auth/?provider_address=${provider_address}&challengeId=${data.challengeId}&startTime=${data.startTime}&endTime=${data.endTime}`}
             style={{ marginLeft: 'auto' }}
           >
           Submit
