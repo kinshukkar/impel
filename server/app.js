@@ -1,6 +1,5 @@
 //import { STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET, STRAVA_CALLBACK_URL} from "./constants";
 const {STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET, STRAVA_CALLBACK_URL} = require('./constants')
-const { MongoClient } = require("mongodb");
 
 var createError = require("http-errors");
 var express = require("express");
@@ -10,11 +9,6 @@ var logger = require("morgan");
 var cors = require("cors");
 var passport = require("passport");
 var StravaStrategy = require('passport-strava-oauth2').Strategy;
-
-const uri =
-  "mongodb://139.59.77.81:27017/?poolSize=20&writeConcern=majority";
-// Create a new MongoClient
-const client = new MongoClient(uri, { useUnifiedTopology: true });
 
 var indexRouter = require('./routes/index');
 var userRouter = require('./routes/user');
@@ -33,7 +27,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(function(req, res, next) {
-    req.dbclient = client;
     next();
 });
 
