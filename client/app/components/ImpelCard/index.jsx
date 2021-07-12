@@ -170,7 +170,7 @@ const ImpelCard = (props) => {
           // disable Submit button if current date before evaluation date
             disabled={new Date() < new Date(data.endTime)}
             color="primary"
-            href={`http://139.59.77.81/:9000/user/strava-auth/?provider_address=${provider_address}&challengeId=${data.challengeId}&startTime=${data.startTime}&endTime=${data.endTime}`}
+            href={`http://139.59.77.81:9000/user/strava-auth/?provider_address=${provider_address}&challengeId=${data.challengeId}&startTime=${data.startTime}&endTime=${data.endTime}`}
             style={{ marginLeft: 'auto' }}
           >
           Submit
