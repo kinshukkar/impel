@@ -9,7 +9,7 @@ using Neo.SmartContract.Framework.Services;
 
 namespace Impel
 {
-    [DisplayName("Impel.ImpelSCv0.9")]
+    [DisplayName("Impel.ImpelSCv1.0")]
     [ManifestExtra("Author", "Kinshuk Kar, Pompita Sarkar")]
     [ManifestExtra("Email", "kinshuk89@gmail.com")]
     [ManifestExtra("Description", "A novel motivation mechanism to assist people in getting fitter with social and financial rewards")]
@@ -167,6 +167,8 @@ namespace Impel
 
             if (!Runtime.CheckWitness(from)) throw new Exception("Check your signature.");
 
+            if (amount > 5000000000) throw new Exception("The system takes in a commit amount of less than 50 GAS");
+
             if (Runtime.CallingScriptHash == GAS.Hash) {
                 if (data.Length == 2 && (string)data[0] == "join_challenge") {
                     BigInteger challengeId = (BigInteger) data[1];
@@ -231,6 +233,8 @@ namespace Impel
                 }
                 string entryKey = "c#" + challengeId + entry.userKey;
                 contractDataManager.PutChallengeEntry(entryKey, entry);
+
+                contractDataManager.PutOracleResp(challengeId, "", "");
 
                 OnChallengeEvaluated(challengeId);
             }
@@ -310,7 +314,7 @@ namespace Impel
 
         public BigInteger GetAndIncrementLastChallengeId() {
             BigInteger lastChallengeId = (BigInteger) dappData.Get("LastChallengeId");
-            dappData.Put("LastChallengeId", lastChallengeId);
+            dappData.Put("LastChallengeId", lastChallengeId + 1);
             return lastChallengeId;
         }
 
@@ -399,7 +403,6 @@ namespace Impel
                             break;
                         }
 
-                        userKeyArray[i - addressBeginIndex] = keyArray[i];
                         match_char_count = match_char_count + 1;
 
                         if (match_char_count > 32) {
