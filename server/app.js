@@ -14,7 +14,7 @@ var StravaStrategy = require('passport-strava-oauth2').Strategy;
 const uri =
   "mongodb://139.59.77.81:27017/?poolSize=20&writeConcern=majority";
 // Create a new MongoClient
-const client = new MongoClient(uri);
+const client = new MongoClient(uri, { useUnifiedTopology: true });
 
 var indexRouter = require('./routes/index');
 var userRouter = require('./routes/user');

@@ -53,7 +53,7 @@ router.post('/register', function(req, res) {
     // Get our form values. These rely on the "name" attributes
     var address = req.body.address;
 
-    const impeldb = dbclient('impel');
+    const impeldb = dbclient.db('impel');
     const usersCollection = database.collection('users');
 
     // Submit to the DB
