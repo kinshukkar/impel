@@ -241,7 +241,7 @@ router.get('/strava-auth/callback', function(req, res) {
         const athlete = request.data.athlete;
         var activities = `https://www.strava.com/api/v3/athlete/activities?before=${endTime}&after=${startTime}&page=1&per_page=100&access_token=${access_token}`;
         getAthleteData(activities, provider_address, challengeId);
-        return res.redirect('http://localhost:5600')
+        return res.redirect('http://139.59.77.81:5600')
     }).catch(function(err) {
         console.log(err)
     });
