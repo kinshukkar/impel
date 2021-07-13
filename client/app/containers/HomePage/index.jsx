@@ -62,6 +62,7 @@ function a11yProps(index) {
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
+    margin: '30px 0 0 90px',
   },
   tableWrapper: {
     maxHeight: 407,

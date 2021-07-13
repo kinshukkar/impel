@@ -63,6 +63,7 @@ const App = (props) => {
           ) : null
         }
       </Suspense>
+      <footer className="footer">Copyright &copy; Team Impel </footer>
     </>
   );
 };
