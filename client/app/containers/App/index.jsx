@@ -47,7 +47,7 @@ const App = (props) => {
         titleTemplate="%s"
         defaultTitle="Impel"
       >
-        <title>Impel - Get Fitter and Richer</title>
+        <title>Impel - Get Fitter with Rewards</title>
       </Helmet>
       <Suspense fallback={<div>Loading...</div>}>
         {
