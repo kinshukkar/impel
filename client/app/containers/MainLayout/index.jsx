@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
-    margin: '30px 0 0 90px',
+    background: 'white',
   },
   copyright: {
     position: 'fixed',
