@@ -7,13 +7,13 @@ import Neon, {
 console.log('Neon---', Neon);
 
 export const config = {
-  networkMagic: 844378958,
-  impelScriptHash: '534efcbc737526e49a158355a134fc317db3b406',
-  impelTokenScriptHash: 'dfa3dca56168dd9a9ed96e247def777af4166de2',
-  rpcAddress: 'http://seed2t.neo.org:20332',
+  networkMagic: 877933390,
+  impelScriptHash: 'ffbc4b5726f86447c26b8355970b6466f9ab905f',
+  impelTokenScriptHash: 'e6374da47bf4a145f301bb8a3c366dd1fd94ca20',
+  rpcAddress: 'http://seed1t4.neo.org:20332',
   walletWif: 'KxxedRx1rJ9dZ4ptsfXgYVSsLjkPud3ZxgZzdkbN1JGVk6MdbM7F8',
   account: new wallet.Account('KxxedRx1rJ9dZ4ptfXgYVSsLjkPud3ZxgZzdkbN1JGVk6MdbM7F8'),
-  rpcClient: new rpc.RPCClient('http://seed2t.neo.org:20332'),
+  rpcClient: new rpc.RPCClient('http://seed1t4.neo.org:20332'),
 };
 
 async function createTransaction(account, contract, operation, params) {
